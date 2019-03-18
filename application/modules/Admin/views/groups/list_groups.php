@@ -13,7 +13,7 @@ if ($kaiza_groups->num_rows() > 0)
 			$td_group_status = "
 				<a href='" . base_url() . "administration/deactivate-group/" . $row->group_id . "'
 				class='btn btn-sm btn-warning' onclick='return confirm(\"" . $message . "\")'>
-					<i class='fa fa-thumbs-down'></i>
+					</i>Deactivate
 				</a>
 			";
 		}
@@ -22,7 +22,7 @@ if ($kaiza_groups->num_rows() > 0)
 			$message = "Are you Sure You want to Activate???";
 			$td_group_status = "
 				<a href='" . base_url() . "administration/activate-group/" . $row->group_id . "' class='btn btn-sm btn-success' onclick='return confirm(\"" . $message . "\")'>
-					<i class='fa fa-thumbs-up'></i>
+					</i>Activate
 				</a>
 			";
 		}
@@ -38,7 +38,7 @@ if ($kaiza_groups->num_rows() > 0)
 					data-target='#groupActions" . $row->group_id . "'>
 					Action Cards
 				</button>
-				<a href='" . base_url() . "administration/group-users/" . $group_name ."/" . $row->group_id . "' class='btn btn-secondary btn-sm'><i class='fa fa-users'></i></a>" .
+				<a href='" . base_url() . "administration/group-users/" . $group_name ."/" . $row->group_id . "' class='btn btn-secondary btn-sm'>Members</a>" .
 					$td_group_status . "
 			</td>
 		</tr>
