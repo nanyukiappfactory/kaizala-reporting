@@ -40,12 +40,12 @@ if ($check == 'groups')
         </select>
         <div class="input-group-append">
             <button class="btn btn-primary ml-3" type="submit">
-                <i class="fas fa-search fa-sm"></i>
+                Search
             </button>
             <?php if ($search_params) {?>
             <div class="col-auto my-1">
                 <a href="<?php echo base_url(); ?>admin/group/close_search" class="btn btn-danger">
-                    <i class="fas fa-times"></i></a>
+                    CancelSearch</a>
             </div>
             <?php }?>
         </div>
@@ -86,12 +86,12 @@ if ($check == 'groups')
                             </div>
                         </div>
                         <div class="col-auto my-1">
-                            <button type="submit" class="btn btn-primary"><i class="fas fa-search fa-sm"></i></button>
+                            <button type="submit" class="btn btn-primary">Search</button>
                         </div>
                         <?php if ($search_params) {?>
                         <div class="col-auto my-1">
                             <a href="<?php echo base_url(); ?>admin/group/close_search" class="btn btn-danger">
-                                <i class="fas fa-times"></i>
+                                CancelSearch
                             </a>
                         </div>
                         <?php }?>
