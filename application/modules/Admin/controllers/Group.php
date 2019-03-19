@@ -156,6 +156,22 @@ class Group extends admin
                     {
                         $user_name = array_key_exists('name', $member) ? (($member->name == null || $member->name == "" ) ? 'no name' : $member->name) : '';
 
+                        if(array_key_exists('profilePic', $member))
+                        {
+                            if($member->profilePic == null || $member->profilePic == "" )
+                            {
+                                $profilePic = 'no profilePic';
+                            }
+                            else 
+                            {
+                                $profilePic = $member->profilePic;
+                            }
+                        }
+                        else
+                        {
+                            $profilePic = '';
+                        }
+
                         $profilePic = array_key_exists('profilePic', $member) ? (($member->profilePic == null || $member->profilePic == "" ) ? 'no profilePic' : $member->profilePic) : '';
 
                         array_push($arr_members, array(

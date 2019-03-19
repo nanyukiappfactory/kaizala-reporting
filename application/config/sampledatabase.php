@@ -75,11 +75,6 @@ $query_builder = TRUE;
 
 $db['default'] = array(
 	'dsn'	=> '',
-	// -- friend db configuration --
-	// 'hostname' => 'localhost',
-	// 'username' => 'root',
-	// 'password' => '',
-	// 'database' => 'ecommerce',
 
 	// -- mkopa db --
 	'hostname' => 'localhost',

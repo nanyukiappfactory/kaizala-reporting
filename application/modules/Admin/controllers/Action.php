@@ -38,42 +38,72 @@ class Action extends CI_Controller
     public function index()
     {
         $params = $_SERVER['QUERY_STRING'];
-        if ($params != null || $params != "") {
+        if ($params != null || $params != "") 
+        {
             $validation_token = str_replace('validationToken=', '', $params);
             echo ($validation_token);
-        } else {
+        } 
+        else 
+        {
             $json_string = file_get_contents("php://input");
 
-            $json_object = json_decode($json_string);
+            $this->handle_event_submitted($json_string);
+            
+        }
 
-            if (is_array(json_decode($json_string, true))) {
-                $event_type = $json_object->eventType;
+    }
 
-                //fetch group
-                $group_unique_id = $json_object->data->groupId;
-                $group_details = $this->group_model->get_group_details($group_unique_id);
+    private function handle_event_submitted($json_string)
+    {
+        $json_object = json_decode($json_string);
 
-                $group_name = $group_details[0]->group_name;
-                $action_card_unique_id = $json_object->data->actionId;
+        if (is_array(json_decode($json_string, true))) 
+        {
+            $event_type = $json_object->eventType;
 
-                $existed_action_id = null;
+            //fetch group
+            $group_unique_id = $json_object->objectId;
 
-                if ((strpos($event_type, 'Response') != false) || (strpos($event_type, 'response') != false)) {
+            $group_details = $this->group_model->get_group_details($group_unique_id);
 
-                    $if_action_exists = $this->actioncard_model->check_if_action_exists($action_card_unique_id);
+            $group_name = $group_details[0]->group_name;
+            $action_card_unique_id = $json_object->data->actionId;
 
-                    if ($if_action_exists == false) {
-                        $to_do = 'save';
-                    } else {
-                        $existed_action_id = $if_action_exists->action_card_id;
+            $existed_action_id = null;
 
-                        $to_do = 'update';
-                    }
+            if ((strpos($event_type, 'Response') != false) || (strpos($event_type, 'response') != false)) 
+            {
 
-                } else if (strpos($event_type, 'Created') != false || strpos($event_type, 'Created') != false) {
-                    $to_do = 'created';
+                $if_action_exists = $this->actioncard_model->check_if_action_exists($action_card_unique_id);
+
+                if ($if_action_exists == false) 
+                {
+                    $to_do = 'save';
+                } 
+                else 
+                {
+                    $existed_action_id = $if_action_exists->action_card_id;
+
+                    $to_do = 'update';
                 }
 
+            } 
+            else if (strpos($event_type, 'Created') != false || strpos($event_type, 'Created') != false) 
+            {
+                $to_do = 'created';
+            }
+            else if($event_type == 'MemberAdded')
+            {
+                $to_do = 'memberAdded';
+            }
+
+
+            if($to_do == 'memberAdded')
+            {
+                $this->handle_member_added($json_object);
+            }
+            else
+            {
                 $db_result = $this->actioncard_model->save_action_card($json_object, $group_name, $to_do, $existed_action_id);
 
                 if ($to_do == 'save' || $to_do == 'created') {
@@ -82,7 +112,8 @@ class Action extends CI_Controller
                     $action_card_id = $if_action_exists->action_card_id;
                 }
 
-                if (($action_card_id != false) && ($to_do != 'created')) {
+                if (($action_card_id != false) && ($to_do != 'created')) 
+                {
 
                     $response_with_questions = $json_object->data->responseDetails->responseWithQuestions;
 
@@ -90,20 +121,59 @@ class Action extends CI_Controller
 
                     $event_id = $json_object->eventId;
 
-                    foreach ($response_with_questions as $key => $response_with_question) {
+                    foreach ($response_with_questions as $key => $response_with_question) 
+                    {
                         $action_response_question_id = $this->action_model->save_action_response_question($response_with_question, $json_object, $action_card_id, $group_details, $response_id, $event_id);
                     }
 
                     echo "ActionResponse";
-                } else {
+                } 
+                else 
+                {
                     echo "ActionCreated";
                 }
-
-            } else {
-                echo "No body was found";
             }
+
+        } 
+        else 
+        {
+            echo "No body was found";
+        }
+    }
+
+    private function handle_member_added($json_object)
+    {
+        if(array_key_exists('profilePic', $json_object))
+        {
+            $profilePic = $json_object->profilePic;
+        }
+        else
+        {
+            $profilePic = "no profilePic";
         }
 
+        $arr_members = array();
+
+        array_push($arr_members, 
+            array(
+                'user_unique_id' => $json_object->data->memberId,
+                'group_unique_id' => $json_object->objectId,
+                'user_role' => $json_object->type,
+                'user_mobile_number' => $json_object->member,
+                'user_name' => $json_object->memberName,
+                'user_profile_pic' => $profilePic,
+                'user_is_provisioned' => 1,
+            )
+        );
+
+        if ($this->group_model->save_group_members($arr_members)) 
+        {
+            echo 'memberAdded';
+        }
+        else
+        {
+            echo 'unable to aad member';
+        }
     }
 
 }
