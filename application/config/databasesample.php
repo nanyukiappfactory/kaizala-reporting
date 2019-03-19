@@ -70,31 +70,15 @@ defined('BASEPATH') or exit('No direct script access allowed');
 | The $query_builder variables lets you determine whether or not to load
 | the query builder class.
  */
-// $active_group = 'default';
-// $query_builder = TRUE;
-// // PHP Data Objects(PDO) Sample Code:
-// try {
-//     $conn = new PDO("sqlsrv:server = tcp:nanyukisql.database.windows.net,1433; Database = nanyukisql", "alvaro", "{your_password_here}");
-//     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-// }
-// catch (PDOException $e) {
-//     print("Error connecting to SQL Server.");
-//     die(print_r($e));
-// }
 
-// // SQL Server Extension Sample Code:
-// $connectionInfo = array("UID" => "alvaro@nanyukisql", "pwd" => "{your_password_here}", "Database" => "nanyukisql", "LoginTimeout" => 30, "Encrypt" => 1, "TrustServerCertificate" => 0);
-// $serverName = "tcp:nanyukisql.database.windows.net,1433";
-// $conn = sqlsrv_connect($serverName, $connectionInfo);
 $active_group = 'default';
 $db['default'] = array(
     'dsn' => '',
-    'hostname' => 'nanyukisql.database.windows.net,1433',
-    'username' => 'alvaro',
-    'password' => 'r6r5bb!!',
-    'database' => 'nanyukisql',
-    'dbdriver' => 'sqlsrv',
-    // 'port'     => 1433,
+    'hostname' => '{your_db_hostname}',
+    'username' => '{your_db_username}',
+    'password' => '{your_db_password}',
+    'database' => '{your_db_name}',
+    'dbdriver' => '{db_driver :: refer to comments above}',
     'autoinit' => true,
     'dbprefix' => '',
     'pconnect' => false,

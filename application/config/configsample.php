@@ -23,9 +23,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | a PHP script and you can easily do that on your own.
 |
 */
-// $config['base_url'] = 'http://localhost/appfactory-projs/mpesa/';
+// $config['base_url'] = 'http://localhost/kaizala-reporting/';
 
-$config['base_url'] = 'https://mkopa-mkp.azurewebsites.net/';
+$config['base_url'] = '{your_app_hostname :: ending with a forward slash}';
 /*
 |--------------------------------------------------------------------------
 | Index File
