@@ -526,3 +526,6 @@ $config['proxy_ips'] = '';
 $config['modules_locations'] = array(
 	APPPATH.'modules/' => '../modules/',
 );
+$config['application_id'] = '';
+$config['application_secret'] = '';
+$config['refresh_token'] = '';
