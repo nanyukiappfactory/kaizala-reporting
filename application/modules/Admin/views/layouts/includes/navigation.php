@@ -7,21 +7,23 @@
 
     <!-- Topbar Search -->
 
-<?php
-if ($check == 'groups') 
-{
-	$search_params = $this->session->userdata('search_params');
+    <?php
+if ($check == 'groups') {
+
+    $display_name = $this->session->userdata('display_name');
+    $email_address = $this->session->userdata('email_address');
+
+    $search_params = $this->session->userdata('search_params');
+    
     $Kaizala_groups = $groups->result();
     $arr = [];
     $group_name_options = "";
     $group_type_options = "";
 
-    foreach ($Kaizala_groups as $row)
-    {
-        $group_name_options .= '<option value="'. $row->group_name . '">'. $row->group_name . '</option>';
-        if (!in_array($row->group_type, $arr)) 
-        {
-            $group_type_options .= "<option value=". $row->group_type . ">". $row->group_type .	"</option>";
+    foreach ($Kaizala_groups as $row) {
+        $group_name_options .= '<option value="' . $row->group_name . '">' . $row->group_name . '</option>';
+        if (!in_array($row->group_type, $arr)) {
+            $group_type_options .= "<option value=" . $row->group_type . ">" . $row->group_type . "</option>";
             array_push($arr, $row->group_type);
         }
     }
@@ -31,12 +33,12 @@ if ($check == 'groups')
         <select class="form-control bg-light border-0 small custom-select2" id="group_name" name="group_name"
             aria-label="Search" aria-describedby="basic-addon2">
             <option value="">Select Group Name...</option>
-            <?php echo $group_name_options;?>
+            <?php echo $group_name_options; ?>
         </select>
         <select class="form-control bg-light border-0 small custom-select2 ml-3" id="group_type" name="group_type"
             aria-label="Search" aria-describedby="basic-addon2">
             <option value="">Select Group Type..</option>
-            <?php echo $group_type_options;?>
+            <?php echo $group_type_options; ?>
         </select>
         <div class="input-group-append">
             <button class="btn btn-primary ml-3" type="submit">
@@ -72,7 +74,7 @@ if ($check == 'groups')
                                 <select class="form-control bg-light border-0 small custom-select2" id="group_name"
                                     name="group_name" aria-label="Search" aria-describedby="basic-addon2">
                                     <option value="">Select Group Name..</option>
-                                    <?php echo $group_name_options;?>
+                                    <?php echo $group_name_options; ?>
                                 </select>
                             </div>
                         </div>
@@ -81,7 +83,7 @@ if ($check == 'groups')
                                 <select class="form-control bg-light border-0 small custom-select2" id="group_type"
                                     name="group_type" aria-label="Search" aria-describedby="basic-addon2">
                                     <option value="">Select Group Type..</option>
-                                    <?php echo $group_type_options;?>
+                                    <?php echo $group_type_options; ?>
                                 </select>
                             </div>
                         </div>
@@ -102,14 +104,14 @@ if ($check == 'groups')
         </li>
         <?php }?>
 
-        <!-- Nav Item - User Information -->
-        <li class="nav-item dropdown no-arrow">
-            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown"
-                aria-haspopup="true" aria-expanded="false">
-                <span class="mr-2 d-none d-lg-inline text-gray-600 small"></span>
+
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" style="color:#000;" href="#" id="navbarDropdownMenuLink"
+                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <b><?php echo $display_name; ?></b>
             </a>
-            <!-- Dropdown - User Information -->
-            <div class="dropdown-menu dropdown-menu-left shadow animated--grow-in" aria-labelledby="userDropdown">
+            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                <!-- <label class="dropdown-item"><?php echo $email_address; ?></label> -->
                 <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                     Logout

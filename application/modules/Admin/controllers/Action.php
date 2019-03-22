@@ -2,8 +2,8 @@
 if (!defined('BASEPATH')) {
     exit('No direct script access allowed');
 }
-
-class Action extends CI_Controller
+require_once "./application/modules/admin/controllers/Admin.php";
+class Action extends admin
 {
     public function __construct()
     {
