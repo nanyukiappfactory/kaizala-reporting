@@ -8,13 +8,13 @@
     <!-- Topbar Search -->
 
     <?php
+$display_name = $this->session->userdata('display_name');
+$email_address = $this->session->userdata('email_address');
+
 if ($check == 'groups') {
 
-    $display_name = $this->session->userdata('display_name');
-    $email_address = $this->session->userdata('email_address');
-
     $search_params = $this->session->userdata('search_params');
-    
+
     $Kaizala_groups = $groups->result();
     $arr = [];
     $group_name_options = "";
@@ -52,12 +52,20 @@ if ($check == 'groups') {
             <?php }?>
         </div>
     </div>
-    <?php echo form_close(); ?>
+    <?php echo form_close();} ?>
+
+
+
+    <?php if ($check == 'Action-Responses' || $check == 'Actions') {?>
+    <a class="navbar-brand" href="#"><?php echo $check; ?></a>
+    <?php }?>
+
 
     <!-- Topbar Navbar -->
     <ul class="navbar-nav ml-auto">
 
         <!-- Nav Item - Search Dropdown (Visible Only XS) -->
+        <?php if ($check == 'groups') {?>
         <li class="nav-item dropdown no-arrow d-sm-none">
             <a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button" data-toggle="dropdown"
                 aria-haspopup="true" aria-expanded="false">

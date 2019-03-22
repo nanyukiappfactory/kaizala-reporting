@@ -28,7 +28,7 @@ class Actioncard extends admin
             "page_header" => "Groups",
             "content" => $this->load->view("actions/all_actions", $v_data, true),
             "action_cards" => $v_data["action_cards"],
-            "check" => "actions",
+            "check" => "Actions",
         );
         // var_dump($data);die();
 
@@ -50,7 +50,7 @@ class Actioncard extends admin
             "page_header" => "Groups",
             "content" => $this->load->view("actions/all_responses", $v_data, true),
             "action_responses" => $v_data["action_responses"],
-            "check" => "action_responses",
+            "check" => "Action-Responses",
         );
         // var_dump($data);die();
 
