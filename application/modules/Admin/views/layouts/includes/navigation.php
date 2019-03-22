@@ -54,8 +54,6 @@ if ($check == 'groups') {
     </div>
     <?php echo form_close();} ?>
 
-
-
     <?php if ($check == 'Action-Responses' || $check == 'Actions') {?>
     <a class="navbar-brand" href="#"><?php echo $check; ?></a>
     <?php }?>
