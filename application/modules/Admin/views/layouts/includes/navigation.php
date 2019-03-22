@@ -60,7 +60,6 @@ if ($check == 'groups') {
     <a class="navbar-brand" href="#"><?php echo $check; ?></a>
     <?php }?>
 
-
     <!-- Topbar Navbar -->
     <ul class="navbar-nav ml-auto">
 
