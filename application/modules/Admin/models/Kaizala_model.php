@@ -9,9 +9,9 @@ class Kaizala_model extends CI_Model
 
     public function __construct()
     {
-        $this->application_id = "APPLICATION_ID HERE";
-        $this->application_secret = "APPLICATION_SECRET HERE";
-        $this->refresh_token = "REFRESH_TOKEN HERE";
+        $this->application_id = $this->config->item('application_id');
+        $this->application_secret = $this->config->item('application_secret');
+        $this->refresh_token = $this->config->item('refresh_token');
 
         $this->access_token_url = "https://kms.kaiza.la/v1/accessToken";
     }
