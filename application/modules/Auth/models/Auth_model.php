@@ -13,9 +13,10 @@ class Auth_model extends CI_Model
 
     public function __construct()
     {
-        $this->client_id = 'YOUR APPLICATION_ID';
-        $this->secret = 'YOUR SECRET HERE';
-        $this->redirect_uri = 'YOUR REDIRECT_URL HERE';
+        $this->client_id = $this->config->item('client_id');
+        $this->secret = $this->config->item('secret');
+        $this->redirect_uri = $this->config->item('redirect_uri');
+        
         $this->authority = 'https://login.microsoftonline.com';
 
         $this->scopes = array("offline_access", "openid");

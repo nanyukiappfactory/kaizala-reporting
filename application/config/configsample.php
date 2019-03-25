@@ -526,6 +526,29 @@ $config['proxy_ips'] = '';
 $config['modules_locations'] = array(
 	APPPATH.'modules/' => '../modules/',
 );
+
+/**
+ * Kaizala Connector Settings
+ * 
+ * for example
+ * 
+ * $config['application_id'] = 'de5d45de2319-b2b3';
+ * $config['application_secret'] = '2KELFFIUTLL';
+ * $config['refresh_token'] = 'eyJhbGciOiJIUzI1NiIsInR5cCI6Ihajdh.psapXVCJ9.eyJ1cm46.............';
+ */
 $config['application_id'] = '';
 $config['application_secret'] = '';
 $config['refresh_token'] = '';
+
+/**
+ * Login with Office 365 and AD Settings
+ * 
+ * for example
+ * 
+ * $config['client_id'] = 'de5d45de2319-b2b3';
+ * $config['secret'] = 'jallkooPPPaas#$jslldsd';
+ * $config['redirect_uri'] = 'https://trial.com/login'; or $config['redirect_uri'] = 'http://localhost/trial/login'
+ */
+$config['client_id'] = '';
+$config['secret'] = '';
+$config['redirect_uri'] = '';
