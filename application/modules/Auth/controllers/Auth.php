@@ -24,11 +24,17 @@ class Auth extends CI_Controller
     {
         if (isset($_GET["code"])) {
             // echo 23;die();
-            $redirect_uri = $this->auth_model->login_user($_GET["code"]);
+            $result = $this->auth_model->login_user($_GET["code"]);
 
-            if ($redirect_uri) {
-                redirect('administration');
-
+            if ($result[0] == 'success') {
+                $redirect_uri = $result[0];
+                if ($redirect_uri) {
+                    redirect('administration');
+                }
+            } else if ($result[0] == 'error') {
+                $v_error['http_code'] = $result[1];
+                $v_error['message'] = $result[2];
+                $this->load->view('error', $v_error);
             }
 
         } else {

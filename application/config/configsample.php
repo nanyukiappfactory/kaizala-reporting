@@ -552,3 +552,4 @@ $config['refresh_token'] = '';
 $config['client_id'] = '';
 $config['secret'] = '';
 $config['redirect_uri'] = '';
+$config['tenant_id'] = '';
