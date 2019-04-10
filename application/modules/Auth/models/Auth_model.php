@@ -94,12 +94,10 @@ class Auth_model extends CI_Model
             $this->get_user_profile();
 
             return array(
-                'success', 
-                $this->redirect_uri
+                'success',
+                $this->redirect_uri,
             );
-        }
-        else if($result[0] == 'error')
-        {
+        } else if ($result[0] == 'error') {
             return array(
                 'error',
                 $result[1],
@@ -185,10 +183,11 @@ class Auth_model extends CI_Model
         // echo json_encode($headers);die();
         $result = $this->run_curl($outlookApiUrl, null, $headers);
 
-        $response = explode("\n", trim($result[0]));
+        $response = explode("\n", trim($result[1]));
         $response = $response[count($response) - 1];
 
         $user_details = json_decode($response);
+        // echo json_encode($user_details);die();
         $display_name = $user_details->DisplayName;
         $email_address = $user_details->EmailAddress;
 
