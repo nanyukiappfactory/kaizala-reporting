@@ -1,5 +1,5 @@
-<link rel="stylesheet" href="<?php echo base_url(); ?>assets/custom/themes/vendor/fontawesome/css/all.css">
-
+<!-- <link rel="stylesheet" href="<?php echo base_url(); ?>assets/custom/themes/vendor/fontawesome/css/all.css"> -->
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
 <!-- Custom styles for this template-->
 <link href="<?php echo base_url(); ?>assets/themes/custom/styles.css" rel="stylesheet">
 <!-- Custom styles for this template-->
@@ -20,9 +20,9 @@
                     Sorry, an error has occured, <?php echo $message; ?>
                 </div>
                 <div class="error-actions">
-                    <a href="<?php echo base_url();?>login" class="btn btn-primary btn-lg"><span
+                    <a href="<?php echo base_url(); ?>login" class="btn btn-primary btn-lg"><span
                             class="glyphicon glyphicon-home"></span>
-                        Take Me Login </a>
+                        Take Me To Login </a>
                 </div>
             </div>
         </div>
