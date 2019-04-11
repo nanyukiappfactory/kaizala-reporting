@@ -110,7 +110,7 @@ class Group extends admin
 
         $start = ($this->uri->segment($segment)) ? $this->uri->segment($segment) : 0;
 
-        $where = 'webhook_id IS NOT NULL OR webhook_id = "null"';
+        $where = "webhook_id IS NOT NULL OR webhook_id = 'null'";
 
         if ($this->session->userdata('search_params')) {
             $where .= ' AND ' . $this->session->userdata('search_params');
