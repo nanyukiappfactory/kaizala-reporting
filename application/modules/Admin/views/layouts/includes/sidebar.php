@@ -1,3 +1,19 @@
+<?php
+$activated_groups_li = "";
+
+if ($registered_groups->num_rows() > 0) {
+    $activated_groups_li = '
+    <li class="nav-item">
+        <a class="nav-link d-sm-inline-block btn btn-sm btn-dark shadow-sm"
+        href="' . base_url() . 'administration/activated-groups">
+    <i class="fas fa-chart-line"></i>
+    <span>Activated-Groups</span>
+    </a>
+    </li>
+    <hr class="sidebar-divider">';
+}
+
+?>
 <ul class="navbar-nav bg-dark sidebar sidebar-dark accordion" id="accordionSidebar">
 
     <!-- Sidebar - Brand -->
@@ -13,11 +29,13 @@
     <!-- Divider -->
     <hr class="sidebar-divider">
 
+    <?php echo $activated_groups_li; ?>
+
     <li class="nav-item">
         <a class="nav-link d-sm-inline-block btn btn-sm btn-dark shadow-sm"
             href="<?php echo base_url(); ?>administration/all-groups">
             <i class="far fa-object-ungroup"></i>
-            <span>Groups</span></a>
+            <span>All-Groups</span></a>
     </li>
 
     <!-- Divider -->

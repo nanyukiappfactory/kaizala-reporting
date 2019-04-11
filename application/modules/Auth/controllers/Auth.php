@@ -37,6 +37,13 @@ class Auth extends CI_Controller
                 $this->load->view('error', $v_error);
             }
 
+            // $redirect_uri = $this->auth_model->login_user($_GET["code"]);
+
+            // if ($redirect_uri) {
+            //     redirect('administration');
+
+            // }
+
         } else {
             $accessUrl = $this->auth_model->get_authorization_url();
 

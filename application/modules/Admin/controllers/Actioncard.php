@@ -12,6 +12,7 @@ class Actioncard extends admin
         $this->load->model('actioncard_model');
         $this->load->model('action_model');
         $this->load->model('site/site_model');
+        $this->load->model('group_model');
     }
 
     public function index($order = 'created_at', $order_method = 'DESC')
@@ -23,12 +24,15 @@ class Actioncard extends admin
 
         $v_data["action_cards"] = $action_cards;
 
+        $webhook_registered_groups = $this->group_model->get_webhook_groups(null);
+
         $data = array(
             "title" => "Action-Cards",
             "page_header" => "Groups",
             "content" => $this->load->view("actions/all_actions", $v_data, true),
             "action_cards" => $v_data["action_cards"],
             "check" => "Actions",
+            'registered_groups' => $webhook_registered_groups,
         );
         // var_dump($data);die();
 
@@ -40,10 +44,12 @@ class Actioncard extends admin
         $v_data["action_responses"] = $this->action_model->get_responses($order, $order_method, $action_id);
 
         $v_data['action_id'] = $action_id;
-        
+
         $v_data["order_method"] = $order_method == "DESC" ? "ASC" : "DESC";
-        
+
         $v_data['count_response'] = $this->action_model->count_response($action_id);
+
+        $webhook_registered_groups = $this->group_model->get_webhook_groups(null);
 
         $data = array(
             "title" => "Action-Responses",
@@ -51,6 +57,7 @@ class Actioncard extends admin
             "content" => $this->load->view("actions/all_responses", $v_data, true),
             "action_responses" => $v_data["action_responses"],
             "check" => "Action-Responses",
+            'registered_groups' => $webhook_registered_groups,
         );
         // var_dump($data);die();
 
@@ -59,12 +66,9 @@ class Actioncard extends admin
 
     public function edit_package_name($action_id)
     {
-        if ($this->action_model->edit_package_name($action_id)) 
-        {
+        if ($this->action_model->edit_package_name($action_id)) {
             $this->session->set_flashdata('success', 'Package name updated successfully');
-        } 
-        else 
-        {
+        } else {
             $this->session->set_flashdata('error', 'Failed to update package name');
         }
 

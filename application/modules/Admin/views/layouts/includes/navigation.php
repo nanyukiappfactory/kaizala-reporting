@@ -110,7 +110,7 @@ if ($check == 'groups') {
         <?php }?>
 
 
-        <li class="nav-item dropdown mr-5">
+        <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" style="color:#000;" href="#" id="navbarDropdownMenuLink"
                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <b><?php echo $display_name; ?></b>

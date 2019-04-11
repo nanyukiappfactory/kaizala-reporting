@@ -30,8 +30,7 @@ class Group extends admin
 
         $where = null;
 
-        if($this->session->userdata('search_params'))
-        {
+        if ($this->session->userdata('search_params')) {
             $where = $this->session->userdata('search_params');
         }
 
@@ -61,45 +60,108 @@ class Group extends admin
         $v_data["kaiza_groups"] = $result;
 
         $v_data["links"] = $this->pagination->create_links();
-        
+
         $v_data["counter"] = $start;
         $v_data["order_method"] = $order_method == "DESC" ? "ASC" : "DESC";
         $v_data["action_cards"] = $this->actioncard_model->all_action_cards();
+
+        $webhook_registered_groups = $this->group_model->get_webhook_groups(null);
 
         $data = array(
             "title" => $this->site_model->display_page_title(),
             "page_header" => "Groups",
             "content" => $this->load->view("groups/list_groups", $v_data, true),
             "groups" => $v_data["kaiza_groups"],
-            "check" => "groups"
+            "check" => "groups",
+            'registered_groups' => $webhook_registered_groups,
         );
         // var_dump($data);die();
 
         $this->load->view('layouts/layout', $data);
     }
 
-
     public function search_groups()
     {
         $group_name = $this->input->post('group_name');
         $group_type = $this->input->post('group_type');
 
-        if($group_name && $group_type)
-        {
+        if ($group_name && $group_type) {
             $where = "group_name = '" . $group_name . "' AND group_type = '" . $group_type . "'";
-        }
-        else if($group_name)
-        {
+        } else if ($group_name) {
             $where = "group_name = '" . $group_name . "'";
-        }
-        else if($group_type)
-        {
+        } else if ($group_type) {
             $where = "group_type = '" . $group_type . "'";
         }
 
         $this->session->set_userdata('search_params', $where);
 
         redirect('administration/all-groups');
+    }
+
+    public function activated($order = 'group_name', $order_method = 'ASC')
+    {
+        //pagination
+        $segment = 5;
+
+        $config = array();
+
+        $config["per_page"] = 10;
+        $config['num_links'] = 5;
+
+        $start = ($this->uri->segment($segment)) ? $this->uri->segment($segment) : 0;
+
+        $where = 'webhook_id IS NOT NULL OR webhook_id = "null"';
+
+        if ($this->session->userdata('search_params')) {
+            $where .= ' AND ' . $this->session->userdata('search_params');
+        }
+
+        $result = $this->group_model->get_groups($config["per_page"], $start, $order, $order_method, $where);
+
+        $config['full_tag_open'] = '<div class="pagging text-center"><nav aria-label="Page navigation example"><ul class="pagination">';
+        $config['full_tag_close'] = '</ul></nav></div>';
+        $config['num_tag_open'] = '<li class="page-item"><span class="page-link">';
+        $config['num_tag_close'] = '</span></li>';
+        $config['cur_tag_open'] = '<li class="page-item active"><span class="page-link">';
+        $config['cur_tag_close'] = '<span class="sr-only">(current)</span></span></li>';
+        $config['next_tag_open'] = '<li class="page-item"><span class="page-link">';
+        $config['next_tagl_close'] = '<span aria-hidden="true">&raquo;</span></span></li>';
+        $config['prev_tag_open'] = '<li class="page-item"><span class="page-link">';
+        $config['prev_tagl_close'] = '</span></li>';
+        $config['first_tag_open'] = '<li class="page-item"><span class="page-link">';
+        $config['first_tagl_close'] = '</span></li>';
+        $config['last_tag_open'] = '<li class="page-item"><span class="page-link">';
+        $config['last_tagl_close'] = '</span></li>';
+
+        $config["base_url"] = base_url() . "administration/activated-groups/" . $order . "/" . $order_method;
+
+        $config["total_rows"] = $this->group_model->groups_count($where);
+
+        $this->pagination->initialize($config);
+
+        $v_data["kaiza_groups"] = $result;
+
+        $v_data["links"] = $this->pagination->create_links();
+
+        $v_data["counter"] = $start;
+        $v_data["order_method"] = $order_method == "DESC" ? "ASC" : "DESC";
+        $v_data["action_cards"] = $this->actioncard_model->all_action_cards();
+
+        $webhook_registered_groups = $this->group_model->get_webhook_groups($where);
+
+        $v_data["registered_groups"] = $webhook_registered_groups;
+
+        $data = array(
+            "title" => $this->site_model->display_page_title(),
+            "page_header" => "Groups",
+            "content" => $this->load->view("groups/activated_groups", $v_data, true),
+            "groups" => $v_data["kaiza_groups"],
+            "check" => "groups",
+            'registered_groups' => $webhook_registered_groups,
+        );
+        // var_dump($data);die();
+
+        $this->load->view('layouts/layout', $data);
     }
 
     public function close_search()
@@ -115,64 +177,48 @@ class Group extends admin
         $group_name = preg_replace('/-/', ' ', $group_name);
         $group_unique_id_obj = $this->group_model->get_group_unique_id($group_id);
         $group_unique_id = $group_unique_id_obj->group_unique_id;
-        
+
         $where = array(
             'group_unique_id' => $group_unique_id,
         );
 
         $users = $this->group_model->get_group_users($where);
 
-        if ($users->num_rows() > 0) 
-        {
+        if ($users->num_rows() > 0) {
             $this->load_users_view($users->result(), $group_name);
-        }
-
-         else 
-         {
+        } else {
             $members = $this->kaizala_model->get_group_users($group_unique_id, 'members');
 
             // echo json_encode($members);die();
 
-            if ($members != FALSE) 
-            {
+            if ($members != false) {
 
                 $arr_members = array();
 
                 $tests = array();
 
-                foreach ($members as $key => $member) 
-                {
+                foreach ($members as $key => $member) {
 
-                    if(array_key_exists('mobileNumber', $member))
-                    {
+                    if (array_key_exists('mobileNumber', $member)) {
                         $mobileNumber = $member->mobileNumber;
-                    }
-                    else 
-                    {
+                    } else {
                         $mobileNumber = 'not available';
                     }
 
-                   if($mobileNumber != null || $mobileNumber != "")
-                    {
-                        $user_name = array_key_exists('name', $member) ? (($member->name == null || $member->name == "" ) ? 'no name' : $member->name) : '';
+                    if ($mobileNumber != null || $mobileNumber != "") {
+                        $user_name = array_key_exists('name', $member) ? (($member->name == null || $member->name == "") ? 'no name' : $member->name) : '';
 
-                        if(array_key_exists('profilePic', $member))
-                        {
-                            if($member->profilePic == null || $member->profilePic == "" )
-                            {
+                        if (array_key_exists('profilePic', $member)) {
+                            if ($member->profilePic == null || $member->profilePic == "") {
                                 $profilePic = 'no profilePic';
-                            }
-                            else 
-                            {
+                            } else {
                                 $profilePic = $member->profilePic;
                             }
-                        }
-                        else
-                        {
+                        } else {
                             $profilePic = '';
                         }
 
-                        $profilePic = array_key_exists('profilePic', $member) ? (($member->profilePic == null || $member->profilePic == "" ) ? 'no profilePic' : $member->profilePic) : '';
+                        $profilePic = array_key_exists('profilePic', $member) ? (($member->profilePic == null || $member->profilePic == "") ? 'no profilePic' : $member->profilePic) : '';
 
                         array_push($arr_members, array(
                             'user_unique_id' => $member->id,
@@ -189,17 +235,15 @@ class Group extends admin
                 }
                 // echo json_encode($arr_members);die();
 
-                if ($this->group_model->save_group_members($arr_members)) 
-                {
-                    
+                if ($this->group_model->save_group_members($arr_members)) {
+
                     $subscribers = $this->kaizala_model->get_group_users($group_unique_id, 'subscribers');
 
                     // echo json_encode($subscribers);die();
-                    if($subscribers != FALSE)
-                    {
+                    if ($subscribers != false) {
                         $arr_subscribers = array();
                         foreach ($subscribers as $key => $subscriber) {
-        
+
                             array_push($arr_subscribers, array(
                                 'user_unique_id' => $subscriber->id,
                                 'group_unique_id' => $group_unique_id,
@@ -208,28 +252,22 @@ class Group extends admin
                                 'user_name' => $subscriber->name,
                                 'user_profile_pic' => $subscriber->profilePic,
                                 'user_is_provisioned' => $subscriber->isProvisioned == true ? 1 : 0,
-                                )
+                            )
                             );
-        
+
                         }
-                        if($this->group_model->save_group_members($arr_subscribers))
-                        {
+                        if ($this->group_model->save_group_members($arr_subscribers)) {
+                            $users = $this->group_model->get_group_users($where);
+                        } else {
                             $users = $this->group_model->get_group_users($where);
                         }
-                        else
-                        {
-                            $users = $this->group_model->get_group_users($where);
-                        }
-                    }
-                    else 
-                    {
+                    } else {
                         $users = $this->group_model->get_group_users($where);
                     }
-                } 
-                
-                redirect('administration/group-users/'.preg_replace('/\s/', '-', $group_name).'/'.$group_id);
-            }
-            else {
+                }
+
+                redirect('administration/group-users/' . preg_replace('/\s/', '-', $group_name) . '/' . $group_id);
+            } else {
                 $this->session->set_flashdata('error', "unable to query users");
             }
 
@@ -239,17 +277,20 @@ class Group extends admin
 
     private function load_users_view($users, $group_name)
     {
-        
+
         $v_data['check'] = true;
         $v_data['users'] = $users;
         $v_data['page_header'] = "Users of " . $group_name;
+
+        $webhook_registered_groups = $this->group_model->get_webhook_groups(null);
 
         $data = array(
             "title" => $this->site_model->display_page_title(),
             "page_header" => "Users of " . $group_name,
             "content" => $this->load->view("users/list_users", $v_data, true),
             "users" => $v_data["users"],
-            "check" => "users"
+            "check" => "users",
+            'registered_groups' => $webhook_registered_groups,
         );
         // var_dump($data);die();
 
@@ -260,28 +301,20 @@ class Group extends admin
     {
         $result = $this->kaizala_model->fetch_groups();
 
-        if($result[0] == TRUE)
-        {
+        if ($result[0] == true) {
             $groups = $result[1];
 
             $model_result = $this->group_model->save_group($groups);
             // var_dump($model_result);die();
-            if($model_result == 0)
-            {
+            if ($model_result == 0) {
                 $this->session->set_flashdata('error', "No Group was Fetched!!");
-            }
-            else if($model_result > 0)
-            {
+            } else if ($model_result > 0) {
                 $this->session->set_flashdata('success', $model_result . " new Groups were fetched successfully!!");
-            }
-            else if($model_result == "FAILED")
-            {
+            } else if ($model_result == "FAILED") {
                 $this->session->set_flashdata('error', "Failed to fetch some of groups!!");
             }
-            
-        }
-        else 
-        {
+
+        } else {
             $this->session->set_flashdata('error', $result[1]->message);
         }
 
@@ -297,25 +330,19 @@ class Group extends admin
         // $webhooks = $this->kaizala_model->all_webhooks($group_unique_id);
 
         // echo json_encode($webhooks);die();
-        
+
         $result = $this->kaizala_model->create_event_webhook($group_unique_id, base_url());
 
-        if($result[0] == TRUE)
-        {
+        if ($result[0] == true) {
             $webhook_id = $result[1];
             $activate_status = $this->group_model->activate_group($group_id, $webhook_id);
 
-            if($activate_status)
-            {
+            if ($activate_status) {
                 $this->session->set_flashdata('success', 'Activated Successfully!!');
-            }
-            else
-            {
+            } else {
                 $this->session->set_flashdata('success', 'Unable to activate!!');
             }
-        }
-        else 
-        {
+        } else {
             $this->session->set_flashdata('error', $result[1]->message);
         }
 
@@ -329,24 +356,18 @@ class Group extends admin
         $webhook_id = $webhook_id_obj->webhook_id;
 
         // echo json_encode($webhook_id);die();
-        
+
         $result = $this->kaizala_model->delete_event_webhook($webhook_id);
 
-        if($result[0] == TRUE)
-        {
+        if ($result[0] == true) {
             $activate_status = $this->group_model->deactivate_group($group_id);
 
-            if($activate_status)
-            {
+            if ($activate_status) {
                 $this->session->set_flashdata('success', 'Deactivated Successfully!!');
-            }
-            else
-            {
+            } else {
                 $this->session->set_flashdata('success', 'Unable to deactivate!!');
             }
-        }
-        else 
-        {
+        } else {
             $this->session->set_flashdata('error', $result[1]->message);
         }
 

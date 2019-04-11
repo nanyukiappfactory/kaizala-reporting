@@ -1,8 +1,8 @@
 <?php
 $tr_groups = "";
-if ($kaiza_groups->num_rows() > 0) {
+if ($registered_groups->num_rows() > 0) {
     $count = $counter + 1;
-    foreach ($kaiza_groups->result() as $row) {
+    foreach ($registered_groups->result() as $row) {
         $group_name = preg_replace('/\s/', '-', $row->group_name);
 
         if ($row->group_status == 1) {
@@ -14,7 +14,7 @@ if ($kaiza_groups->num_rows() > 0) {
 				</a>
 			";
         } else {
-            $message = "Are you Sure You want Register a webhook to fetch reponses and action cards submitted to this group: " . $row->group_name . "!!!";
+            $message = "Are you Sure You want Register a webhook to fetch reponses and action cards submitted to this group : " . $row->group_name . " !!!";
             $td_group_status = "
 				<a href='" . base_url() . "administration/activate-group/" . $row->group_id . "' class='btn btn-sm btn-success' onclick='return confirm(\"" . $message . "\")'>
 				<i class='far fa-thumbs-up'></i>

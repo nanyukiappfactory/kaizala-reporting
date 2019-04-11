@@ -5,7 +5,6 @@ class Auth_model extends CI_Model
     public $client_id;
     public $secret;
     public $redirect_uri;
-    public $tenant_id;
     public $authority;
     public $scopes;
     public $auth_url;
@@ -17,15 +16,12 @@ class Auth_model extends CI_Model
         $this->client_id = $this->config->item('client_id');
         $this->secret = $this->config->item('secret');
         $this->redirect_uri = $this->config->item('redirect_uri');
-        $this->tenant_id = $this->config->item('tenant_id');
-
+        
         $this->authority = 'https://login.microsoftonline.com';
 
         $this->scopes = array("offline_access", "openid");
 
-        // $this->scops = array("openid");
-
-        // /* If you need to read email, then need to add following scope */
+        /* If you need to read email, then need to add following scope */
         if (true) {
             array_push($this->scopes, "https://outlook.office.com/mail.read");
         }
@@ -34,13 +30,6 @@ class Auth_model extends CI_Model
             array_push($this->scopes, "https://outlook.office.com/mail.send");
         }
 
-        // $tenant = '/common'; // Allows users with MSAs to sign into the app
-        // $tenant = '/organizations'; // Allows only users with work/school MSAs to sign into the app
-        // $tenant = '/consumers'; // Allows users with personnel MSAs to sign into the app
-
-        //$tenant = '/contoso.onmicrosoft.com'; // Allows only users with MSAs from a particular Azure AD tenant to sign into the app  or //
-        $tenant = "/" . $this->config->item('tenant_id');
-
         //authentication URL
         $this->auth_url = "/common/oauth2/v2.0/authorize";
         $this->auth_url .= "?client_id=" . $this->client_id;
@@ -48,7 +37,7 @@ class Auth_model extends CI_Model
         $this->auth_url .= "&response_type=code&scope=" . implode(" ", $this->scopes);
 
         //token URL
-        $this->token_url = $tenant . "/oauth2/v2.0/token";
+        $this->token_url = "/common/oauth2/v2.0/token";
 
         //api URL
         $this->api_url = "https://outlook.office.com/api/v2.0";
@@ -70,11 +59,8 @@ class Auth_model extends CI_Model
 
     public function login_user($code)
     {
-        // $grant_type = "client_credentials";
-        $grant_type = "authorization_code";
-
         $token_request_data = array(
-            "grant_type" => $grant_type,
+            "grant_type" => "authorization_code",
             "code" => $code,
             "redirect_uri" => $this->redirect_uri,
             "scope" => implode(" ", $this->scopes),
@@ -83,28 +69,14 @@ class Auth_model extends CI_Model
         );
         $body = http_build_query($token_request_data);
         $url = $this->authority . $this->token_url;
+        $response = $this->run_curl($url, $body);
+        $response = json_decode($response);
 
-        $result = $this->run_curl($url, $body);
+        $this->session->set_userdata('office_access_token', $response->access_token);
+        $this->store_token($response);
+        $this->get_user_profile();
 
-        if ($result[0] == 'success') {
-            $response = json_decode($result[1]);
-
-            $this->session->set_userdata('office_access_token', $response->access_token);
-            $this->store_token($response);
-            $this->get_user_profile();
-
-            return array(
-                'success',
-                $this->redirect_uri,
-            );
-        } else if ($result[0] == 'error') {
-            return array(
-                'error',
-                $result[1],
-                $result[2],
-            );
-        }
-
+        return $this->redirect_uri;
     }
 
     //get token and bearer from the session
@@ -123,7 +95,6 @@ class Auth_model extends CI_Model
     //store token to session
     private function store_token($response)
     {
-        // echo json_encode($response);die();
         $this->session->set_userdata('login_user_token', json_encode($response));
     }
 
@@ -146,27 +117,13 @@ class Auth_model extends CI_Model
         $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
         if ($http_code >= 400) {
-            if ($http_code == 400) {
-                $http_code = "400 Access Denied!!";
-                $message = 'The grant was obtained for a different tenant';
-            } else if ($http_code == 404) {
-                $http_code = "404 Not Found";
-                $message = 'Requested page not found!';
-            } else {
-                $message = $response;
-            }
-
-            return array(
-                'error',
-                $http_code,
-                $message,
-            );
+            echo "Error executing request to Office365 api with error code=$http_code<br/><br/>\n\n";
+            echo "<pre>";
+            print_r($response);
+            echo "</pre>";
+            die();
         }
-
-        return array(
-            'success',
-            $response,
-        );
+        return $response;
     }
 
     private function get_user_profile()
@@ -181,13 +138,12 @@ class Auth_model extends CI_Model
 
         $outlookApiUrl = $this->api_url . "/Me";
         // echo json_encode($headers);die();
-        $result = $this->run_curl($outlookApiUrl, null, $headers);
+        $response = $this->run_curl($outlookApiUrl, null, $headers);
 
-        $response = explode("\n", trim($result[1]));
+        $response = explode("\n", trim($response));
         $response = $response[count($response) - 1];
 
         $user_details = json_decode($response);
-        // echo json_encode($user_details);die();
         $display_name = $user_details->DisplayName;
         $email_address = $user_details->EmailAddress;
 

@@ -14,6 +14,20 @@ class Group_model extends CI_Model
         return $this->db->get("groups");
     }
 
+    public function get_webhook_groups($where)
+    {
+        $order = 'group_name';
+        $order_method = 'ASC';
+        if ($where == null) {
+            $where = 'webhook_id IS NOT NULL OR webhook_id = "null"';
+        }
+
+        $this->db->where($where);
+        $this->db->order_by($order, $order_method);
+
+        return $this->db->get("groups");
+    }
+
     public function groups_count($where)
     {
         if ($where != null) {
@@ -116,18 +130,15 @@ class Group_model extends CI_Model
     {
         $data = array(
             "webhook_id" => $webhook_id,
-            "group_status" => 1
+            "group_status" => 1,
         );
 
         $this->db->set($data);
         $this->db->where('group_id = ' . $group_id);
-        if($this->db->update('groups'))
-        {
-            return TRUE;
-        }
-        else 
-        {
-            return FALSE;
+        if ($this->db->update('groups')) {
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -135,18 +146,15 @@ class Group_model extends CI_Model
     {
         $data = array(
             "webhook_id" => "null",
-            "group_status" => 0
+            "group_status" => 0,
         );
 
         $this->db->set($data);
         $this->db->where('group_id = ' . $group_id);
-        if($this->db->update('groups'))
-        {
-            return TRUE;
-        }
-        else 
-        {
-            return FALSE;
+        if ($this->db->update('groups')) {
+            return true;
+        } else {
+            return false;
         }
     }
 }
