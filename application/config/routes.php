@@ -49,7 +49,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 | Examples:    my-controller/index    -> my_controller/index
 |        my-controller/my-method    -> my_controller/my_method
  */
-$route['default_controller'] = 'auth/auth';
+$route['default_controller'] = 'admin/admin';
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = false;
 
@@ -74,6 +74,9 @@ $route['administration/group-users/(:any)/(:num)'] = 'admin/group/get_group_user
 $route['administration/all-users/(:any)/(:any)'] = 'admin/group/group_users/$1/$2';
 $route['administration/deactivate-group/(:num)'] = 'admin/group/deactivate_group/$1';
 $route['administration/activate-group/(:num)'] = 'admin/group/activate_group/$1';
+$route['administration/activated-groups'] = 'admin/group/activated';
+$route['administration/activated-groups/(:any)/(:any)/(:num)'] = 'admin/group/activated/$1/$2/$3';
+$route['administration/activated-groups/(:any)/(:any)'] = 'admin/group/activated/$1/$2';
 
 /**
  * Action Cards
