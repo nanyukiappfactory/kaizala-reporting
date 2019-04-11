@@ -73,6 +73,7 @@ $route['administration/fetch-groups'] = 'admin/group/fetch_groups';
 $route['administration/group-users/(:any)/(:num)'] = 'admin/group/get_group_users/$1/$2';
 $route['administration/all-users/(:any)/(:any)'] = 'admin/group/group_users/$1/$2';
 $route['administration/deactivate-group/(:num)'] = 'admin/group/deactivate_group/$1';
+
 $route['administration/activate-group/(:num)'] = 'admin/group/activate_group/$1';
 $route['administration/activated-groups'] = 'admin/group/activated';
 $route['administration/activated-groups/(:any)/(:any)/(:num)'] = 'admin/group/activated/$1/$2/$3';
