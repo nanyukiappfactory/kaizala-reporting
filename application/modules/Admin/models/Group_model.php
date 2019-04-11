@@ -19,7 +19,7 @@ class Group_model extends CI_Model
         $order = 'group_name';
         $order_method = 'ASC';
         if ($where == null) {
-            $where = 'webhook_id IS NOT NULL OR webhook_id = "null"';
+            $where = "webhook_id IS NOT NULL OR webhook_id = 'null'";
         }
 
         $this->db->where($where);
