@@ -60,19 +60,18 @@ class Action extends CI_Controller
         {
             $event_type = $json_object->eventType;
 
-            //fetch group
+            //fetch group from DB
             $group_unique_id = $json_object->objectId;
-
             $group_details = $this->group_model->get_group_details($group_unique_id);
 
             $group_name = $group_details[0]->group_name;
+            $group_id = $group_details[0]->group_id;
             $action_card_unique_id = $json_object->data->actionId;
 
             $existed_action_id = null;
 
             if ((strpos($event_type, 'Response') != false) || (strpos($event_type, 'response') != false)) 
             {
-
                 $if_action_exists = $this->actioncard_model->check_if_action_exists($action_card_unique_id);
 
                 if ($if_action_exists == false) 
@@ -111,18 +110,23 @@ class Action extends CI_Controller
                     $action_card_id = $if_action_exists->action_card_id;
                 }
 
+                // Save to group_action_cards table
+                if($action_card_id != false){
+                    $group_action_card_id = $this->group_model->save_group_action_cards(array(
+                        'action_card_id' => $action_card_id,
+                        'group_id' => $group_id
+                    ));
+                }
+
                 if (($action_card_id != false) && ($to_do != 'created')) 
                 {
-
                     $response_with_questions = $json_object->data->responseDetails->responseWithQuestions;
-
                     $response_id = $json_object->data->responseId;
-
                     $event_id = $json_object->eventId;
 
                     foreach ($response_with_questions as $key => $response_with_question) 
                     {
-                        $action_response_question_id = $this->action_model->save_action_response_question($response_with_question, $json_object, $action_card_id, $group_details, $response_id, $event_id);
+                        $action_response_question_id = $this->action_model->save_action_response_question($response_with_question, $json_object, $action_card_id, $response_id, $event_id);
                     }
 
                     echo "ActionResponse";

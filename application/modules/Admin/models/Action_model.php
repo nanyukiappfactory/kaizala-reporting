@@ -2,16 +2,12 @@
 
 class Action_model extends CI_Model
 {
-    public function save_action_response_question($response_with_question, $json_object, $action_card_id, $group_details, $response_id, $event_id, $action_card_name = NULL)
+    public function save_action_response_question($response_with_question, $json_object, $action_card_id,  $response_id, $event_id, $action_card_name = NULL)
     {
         //Location
         $latitude = '';
         $longitude = '';
         $location = '';
-
-        //Group name and group type
-        $group_name = $group_details[0]->group_name;
-        $group_type = $group_details[0]->group_type;
 
         //other details
         $action_card_unique_id = $json_object->data->actionId;
@@ -55,41 +51,52 @@ class Action_model extends CI_Model
             $action_answer = $response_with_question->answer;
         }
 
-        $data = array(
-            'action_unique_id' => $action_card_unique_id,
-            'action_id' => $action_card_id,
-            'group_unique_id' => $group_unique_id,
-            'group_name' => $group_name,
-            'group_type' => $group_type,
-            'response_id' => $response_id,
-            'event_id' => $event_id,
-            'action_package' => $action_package,
-            'package_id' => $package_id,
-            'responder_id' => $responder_id,
-            'responder_phone' => $responder_phone,
-            'responder_name' => $responder_name,
-            'action_question' => $action_question,
-            'action_answer' => $action_answer,
-            'action_question_type' => $action_question_type,
-            'response_latitude' => $latitude,
-            'response_longitude' => $longitude,
-            'response_location' => $location,
+        $action_card_question_data = array(
+            'action_card_id' => $action_card_id,
+            'action_card_question' => $action_question,
+            'action_card_question_type' => $action_question_type,
+            'action_card_question_location' => $location,
+            'action_card_question_latitude' => $latitude,
+            'action_card_question_longitude' => $longitude,
             'created_at' => date('Y/m/d H:i:s'),
         );
-        // echo json_encode($data);die();
-        $this->db->insert('action_responses', $data);
-        $action_response_question_id = $this->db->insert_id();
 
-        if ($action_response_question_id) 
+        // Save responses
+        $action_card_question_id = $this->save_response_question($action_card_question_data, 'action_card_questions');
+
+        if($action_card_question_id)
         {
+            $data = array(
+                'action_card_response_unique_id' => $action_card_unique_id,
+                'action_card_question_id' => $action_card_question_id,
+                'group_unique_id' => $group_unique_id,
+                'user_id' => $response_id,
+                'event_id' => $event_id,
+                'responder_phone' => $responder_phone,
+                'action_answer' => $action_answer,
+                'created_at' => date('Y/m/d H:i:s'),
+            );
+
+            $action_response_question_id = $this->save_response_question($data, 'action_card_responses');
+
             return $action_response_question_id;
+        }
+    }
+
+    private function save_response_question($data, $table)
+    {
+        $this->db->insert($table, $data);
+        $last_inserted_id = $this->db->insert_id();
+
+        if ($last_inserted_id) 
+        {
+            return $last_inserted_id;
         } 
         else 
         {
             return false;
         }
     }
-
     
     public function count_response($action_id)
     {

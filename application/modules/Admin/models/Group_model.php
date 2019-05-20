@@ -38,17 +38,51 @@ class Group_model extends CI_Model
         return $query->num_rows();
     }
 
-    public function get_group_users($where)
+    public function get_group_users($group_id)
     {
-        $this->db->where($where);
-        return $this->db->get('users');
+        $this->db->select('*');
+        $this->db->from('users');
+        $this->db->join('group_users', 'users.user_id = group_users.user_id');
+        $this->db->where('group_users.group_id', $group_id);
+
+        return $this->db->get();
     }
 
-    public function save_group_members($members)
+    public function save_members($member)
     {
-        if ($this->db->insert_batch('users', $members)) {
-            return true;
+        $this->db->insert('users', $member);
+        $user_id = $this->db->insert_id();
+        if ($user_id) {
+            return $user_id;
         } else {
+            return false;
+        }
+    }
+
+    public function user_exist($user_unique_id)
+    {
+        $where = array(
+            'user_unique_id' => $user_unique_id
+        );
+        $this->db->select('user_id');
+        $this->db->where($where);
+        $query = $this->db->get('users');
+
+        if($query->num_rows() > 0){
+            $user = $query->result();
+            return $query->result()[0]->user_id;
+        }
+        else{
+            return false;
+        }
+    }
+
+    public function save_group_users($group_users)
+    {
+        if($this->db->insert('group_users', $group_users)){
+            return true;
+        }
+        else{
             return false;
         }
     }
@@ -116,10 +150,23 @@ class Group_model extends CI_Model
         return $query;
     }
 
+    public function save_group_action_cards($group_action_card_details)
+    {
+        $this->db->insert('group_action_cards', $group_action_card_details);
+        $group_action_card_id = $this->db->insert_id();
+
+        if ($group_action_card_id) {
+            return $group_action_card_id;
+        } else {
+            return false;
+        }
+        
+    }
+
     public function get_group_details($group_unique_id)
     {
         $where = "group_unique_id = '" . $group_unique_id . "'";
-        $this->db->select('group_name, group_type');
+        $this->db->select('group_id, group_name, group_type');
         $this->db->where($where);
         $query = $this->db->get('groups')->result();
 

@@ -21,18 +21,6 @@ class Migration_Add_users extends CI_Migration
                 'null' => false,
 
             ),
-            'group_unique_id' => array(
-                'type' => 'VARCHAR',
-                'constraint' => '150',
-                'null' => false,
-
-            ),
-            'user_role' => array(
-                'type' => 'VARCHAR',
-                'constraint' => '30',
-                'null' => false,
-
-            ),
             'user_mobile_number' => array(
                 'type' => 'VARCHAR',
                 'constraint' => '50',
@@ -48,11 +36,6 @@ class Migration_Add_users extends CI_Migration
             'user_profile_pic' => array(
                 'type' => 'VARCHAR',
                 'constraint' => '255',
-                'null' => true,
-            ),
-            'user_is_provisioned' => array(
-                'type' => 'INT',
-                'constraint' => '11',
                 'null' => true,
             ),
             'deleted' => array(

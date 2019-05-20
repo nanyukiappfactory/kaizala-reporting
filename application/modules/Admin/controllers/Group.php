@@ -75,7 +75,6 @@ class Group extends admin
             "check" => "groups",
             'registered_groups' => $webhook_registered_groups,
         );
-        // var_dump($data);die();
 
         $this->load->view('layouts/layout', $data);
     }
@@ -178,27 +177,16 @@ class Group extends admin
         $group_unique_id_obj = $this->group_model->get_group_unique_id($group_id);
         $group_unique_id = $group_unique_id_obj->group_unique_id;
 
-        $where = array(
-            'group_unique_id' => $group_unique_id,
-        );
-
-        $users = $this->group_model->get_group_users($where);
+        $users = $this->group_model->get_group_users($group_id);
 
         if ($users->num_rows() > 0) {
             $this->load_users_view($users->result(), $group_name);
         } else {
+            // Fetch members from Kaizala Server
             $members = $this->kaizala_model->get_group_users($group_unique_id, 'members');
 
-            // echo json_encode($members);die();
-
             if ($members != false) {
-
-                $arr_members = array();
-
-                $tests = array();
-
                 foreach ($members as $key => $member) {
-
                     if (array_key_exists('mobileNumber', $member)) {
                         $mobileNumber = $member->mobileNumber;
                     } else {
@@ -220,52 +208,32 @@ class Group extends admin
 
                         $profilePic = array_key_exists('profilePic', $member) ? (($member->profilePic == null || $member->profilePic == "") ? 'no profilePic' : $member->profilePic) : '';
 
-                        array_push($arr_members, array(
+                        $member_data = array(
                             'user_unique_id' => $member->id,
-                            'group_unique_id' => $group_unique_id,
-                            'user_role' => $member->role,
                             'user_mobile_number' => $mobileNumber,
                             'user_name' => $user_name,
-                            'user_profile_pic' => $member->profilePic,
-                            'user_is_provisioned' => $member->isProvisioned == true ? 1 : 0,
-                        )
+                            'user_profile_pic' => $member->profilePic
                         );
+
+                        $this->handle_user_data($member_data, $member->id, $group_id);
                     }
 
                 }
-                // echo json_encode($arr_members);die();
+                $subscribers = $this->kaizala_model->get_group_users($group_unique_id, 'subscribers');
+                if ($subscribers != false) {
+                    foreach ($subscribers as $key => $subscriber) {
+                        $subscriber_data = array(
+                            'user_unique_id' => $subscriber->id,
+                            'user_mobile_number' => $subscriber->mobileNumber,
+                            'user_name' => $subscriber->name,
+                            'user_profile_pic' => $subscriber->profilePic,
+                        );
 
-                if ($this->group_model->save_group_members($arr_members)) {
-
-                    $subscribers = $this->kaizala_model->get_group_users($group_unique_id, 'subscribers');
-
-                    // echo json_encode($subscribers);die();
-                    if ($subscribers != false) {
-                        $arr_subscribers = array();
-                        foreach ($subscribers as $key => $subscriber) {
-
-                            array_push($arr_subscribers, array(
-                                'user_unique_id' => $subscriber->id,
-                                'group_unique_id' => $group_unique_id,
-                                'user_role' => 'Subscriber',
-                                'user_mobile_number' => $subscriber->mobileNumber,
-                                'user_name' => $subscriber->name,
-                                'user_profile_pic' => $subscriber->profilePic,
-                                'user_is_provisioned' => $subscriber->isProvisioned == true ? 1 : 0,
-                            )
-                            );
-
-                        }
-                        if ($this->group_model->save_group_members($arr_subscribers)) {
-                            $users = $this->group_model->get_group_users($where);
-                        } else {
-                            $users = $this->group_model->get_group_users($where);
-                        }
-                    } else {
-                        $users = $this->group_model->get_group_users($where);
+                        $this->handle_user_data($subscriber_data, $subscriber->id, $group_id);
                     }
-                }
-
+                } 
+                //$users = $this->group_model->get_group_users($group_id);
+                
                 redirect('administration/group-users/' . preg_replace('/\s/', '-', $group_name) . '/' . $group_id);
             } else {
                 $this->session->set_flashdata('error', "unable to query users");
@@ -275,9 +243,26 @@ class Group extends admin
         }
     }
 
+    private function handle_user_data($user_data, $user_id, $group_id)
+    {
+        $user_id = $this->group_model->user_exist($user_id);
+        if($user_id){  
+            $user_id = $user_id;
+        }
+        else{
+            $user_id = $this->group_model->save_members($user_data);
+        }
+
+        if($user_id){
+            $this->group_model->save_group_users(array(
+                'group_id' => $group_id,
+                'user_id' => $user_id
+            ));
+        }
+    }
+
     private function load_users_view($users, $group_name)
     {
-
         $v_data['check'] = true;
         $v_data['users'] = $users;
         $v_data['page_header'] = "Users of " . $group_name;

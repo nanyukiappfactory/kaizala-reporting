@@ -35,7 +35,7 @@
 							<?php echo $row->user_mobile_number; ?>
 						</td>
 						<td>
-							<?php echo $row->user_role; ?>
+							Member
 						</td>
 					</tr>
 					<?php }?>

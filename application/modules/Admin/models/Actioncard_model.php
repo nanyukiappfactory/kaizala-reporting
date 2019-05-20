@@ -7,29 +7,18 @@ class Actioncard_model extends CI_Model
         if($control == 'save' || $control == 'created')
         {
             $action_card_unique_id = $json_object->data->actionId;
-
             $action_package_id = $control == 'save' ? (array_key_exists('actionPackageId', $json_object->data) ? $json_object->data->actionPackageId : $json_object->data->actionId) : $json_object->data->actionId;
-            $group_unique_id = $json_object->data->groupId;
             $action_card_subscription_id = $json_object->subscriptionId;
             $action_card_object_id = $json_object->objectId;
-            $action_card_responder_id = $control == 'save' ? $json_object->data->responseId : 'null';
-            $action_card_responder_phone = $control == 'save' ? $json_object->data->responder : 'null';
-            $action_card_responder_name = $control == 'save' ? $json_object->data->responderName : 'null';
             $action_card_event_type = $json_object->eventType;
 
             $data = array(
                 'action_card_unique_id' => $action_card_unique_id,
-                'action_card_package' => $action_package_id,
-                'group_unique_id' => $group_unique_id,
-                'group_name' => $group_name,
+                'action_card_package_id' => $action_package_id,
                 'action_card_subscription_id' => $action_card_subscription_id,
                 'action_card_object_id' => $action_card_object_id,
-                'action_card_responder_id' => $action_card_responder_id,
-                'action_card_responder_phone' => $action_card_responder_phone,
-                'action_card_responder_name' => $action_card_responder_name,
                 'action_card_event_type' => $action_card_event_type,
-                'created_at' => date('Y/m/d H:i:s'),
-                'created_by' => 0,
+                'created_at' => date('Y/m/d H:i:s')
             );
 
             $this->db->insert('action_cards', $data);
