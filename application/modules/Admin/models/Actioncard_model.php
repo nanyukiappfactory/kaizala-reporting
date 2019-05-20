@@ -39,9 +39,6 @@ class Actioncard_model extends CI_Model
             $action_card_responder_name = $json_object->data->responderName;
 
             $data = array(
-                'action_card_responder_id' => $action_card_responder_id,
-                'action_card_responder_phone' => $action_card_responder_phone,
-                'action_card_responder_name' => $action_card_responder_name,
                 'created_at' => date('Y/m/d H:i:s'),
             );
 

@@ -105,10 +105,10 @@ class Action_model extends CI_Model
     
     public function count_response($action_id)
     {
-        $this->db->select('response_id');
-        $this->db->distinct('response_id');
-        $this->db->where('action_id', $action_id);
-        $query = $this->db->get("action_responses");
+        $this->db->select('unique_response_id');
+        $this->db->distinct('unique_response_id');
+        $this->db->where('action_card_response_id', $action_id);
+        $query = $this->db->get("action_card_responses");
         
         return $query->num_rows();
     }
@@ -126,12 +126,12 @@ class Action_model extends CI_Model
 
         if ($this->db->update('action_cards')) {
             $response_data = array(
-                'action_package' => $package_name,
+                'action_card_package_id' => $package_name,
             );
             $this->db->set($response_data);
-            $this->db->where('action_id', $action_id);
+            $this->db->where('action_card_id', $action_id);
 
-			if ($this->db->update('action_responses')) 
+			if ($this->db->update('action_card_responses')) 
 			{
                 return true;
 			} 
