@@ -44,59 +44,7 @@ class Action extends CI_Controller
         } 
         else 
         {
-            // $json_string = file_get_contents("php://input");
-            $json_string = '{
-                "subscriptionId": "7219d2cc-2016-4684-85f0-5efd5b47b5d5",
-                "objectId": "29b9bf47-9249-4808-a5ec-97fa940a29f7",
-                "objectType": "Group",
-                "eventType": "ActionResponse",
-                "eventId": "96e288e0-cf8a-4664-9e0e-fa687c29d70f",
-                "data": {
-                  "actionId": "01a98cf4-8872-4694-ad5b-f5390ce6bcd6",
-                  "actionPackageId": "fff2ea20-dd0f-41fe-9010-eac11d28cf7c",
-                  "packageId": "fff2ea20-dd0f-41fe-9010-eac11d28cf7c.2",
-                  "groupId": "29b9bf47-9249-4808-a5ec-97fa940a29f7",
-                  "sourceGroupId": "29b9bf47-9249-4808-a5ec-97fa940a29f7",
-                  "responseId": "96e288e0-cf8a-4664-9e0e-fa687c29d70f",
-                  "isUpdateResponse": false,
-                  "responder": "+254710967675",
-                  "responderId": "d8636972-32f6-47e1-91b6-53398e9403f6",
-                  "creatorId": "00000000-0000-0000-0000-000000000000",
-                  "responderName": "Samuel Wanjohi",
-                  "responderProfilePic": "",
-                  "isAnonymous": false,
-                  "responseDetails": {
-                    "responseWithQuestions": [
-                      {
-                        "title": "Keyword",
-                        "type": "Text",
-                        "options": [],
-                        "answer": "Hahaha "
-                      },
-                      {
-                        "title": "Location",
-                        "type": "Text",
-                        "options": [],
-                        "answer": "Hotel "
-                      },
-                      {
-                        "title": "State",
-                        "type": "Text",
-                        "options": [],
-                        "answer": "Iwokek"
-                      }
-                    ]
-                  },
-                  "Properties": []
-                },
-                "fromUser": "+254710967675",
-                "fromUserId": "d8636972-32f6-47e1-91b6-53398e9403f6",
-                "isBotfromUser": false,
-                "fromUserName": "Samuel Wanjohi",
-                "fromUserProfilePic": "",
-                "groupId": "29b9bf47-9249-4808-a5ec-97fa940a29f7",
-                "sourceGroupId": "29b9bf47-9249-4808-a5ec-97fa940a29f7"
-              }';
+            $json_string = file_get_contents("php://input");
 
             $this->handle_event_submitted($json_string);
             
@@ -163,14 +111,14 @@ class Action extends CI_Controller
                 }
 
                 // Save to group_action_cards table
-                if($action_card_id != false){
+                if($action_card_id != false && ($to_do == 'save' || $to_do == 'created')){
                     $group_action_card_id = $this->group_model->save_group_action_cards(array(
                         'action_card_id' => $action_card_id,
                         'group_id' => $group_id
                     ));
                 }
 
-                if (($action_card_id != false) && ($to_do != 'created')) 
+                if (($action_card_id != false) && ($to_do != 'created' && $to_do != 'update')) 
                 {
                     $response_with_questions = $json_object->data->responseDetails->responseWithQuestions;
                     $response_id = $json_object->data->responseId;
