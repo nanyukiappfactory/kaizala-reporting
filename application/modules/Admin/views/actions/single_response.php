@@ -1,6 +1,7 @@
 <!-- Modal -->
 <?php
 $tr_actions_responses = "";
+$count = 1;
 foreach ($action_responses as $key => $action_response) {
     /**
      * So when you are going to use javascript date object timestamp with php date object you should divide timestamp of javascript by 1000 and use it in php
@@ -9,13 +10,12 @@ foreach ($action_responses as $key => $action_response) {
      * echo date('d M Y H:i', $date);
      */
 
-    if ($action_response->action_question_type == 'Location') {
-        $answer = $action_response->response_location;
-    } else if ($action_response->action_question_type == 'DateTime') {
+    if ($action_response->action_card_question_type == 'Location') {
+        $answer = $action_response->action_card_question_location;
+    } else if ($action_response->action_card_question_type == 'DateTime') {
         $str_date = $action_response->action_answer;
         $num_date = $str_date + 0;
         $date = intval($num_date / 1000);
-        // var_dump($date);die();
         $answer = date('d M Y H:i', $date);
     } else {
         $answer = $action_response->action_answer;
@@ -25,9 +25,10 @@ foreach ($action_responses as $key => $action_response) {
     }
 
     $tr_actions_responses .= "
-		<tr>
-			<td>" . $action_response->action_question_type . "</td>
-			<td>" . $action_response->action_question . "</td>
+        <tr>
+            <td>" . $count++ . "</td>
+			<td>" . $action_response->action_card_question_type . "</td>
+			<td>" . $action_response->action_card_question . "</td>
 			<td>" . $answer . "</td>
 		</tr>
 	";
@@ -48,6 +49,7 @@ foreach ($action_responses as $key => $action_response) {
                 <table class="table table-bordered table-hover">
                     <thead class="thead-light">
                         <tr>
+                            <th scope="col">#</th>
                             <th scope="col">QuestionType</th>
                             <th scope="col">Questions</th>
                             <th scope="col">Answers</th>

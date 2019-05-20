@@ -23,19 +23,19 @@ class Migration_Add_action_card_responses extends CI_Migration
                 'constraint' => '11',
                 'null' => false,
             ),
-            'event_id' => array(
-                'type' => 'VARCHAR',
-                'constraint' => '100',
-                'null' => false,
-            ),
             'group_unique_id' => array(
                 'type' => 'VARCHAR',
                 'constraint' => '100',
                 'null' => false,
             ),
-            'user_id' => array(
+            'user_unique_id' => array(
                 'type' => 'VARCHAR',
                 'constraint' => '100',
+                'null' => false,
+            ),
+            'responder_name' => array(
+                'type' => 'VARCHAR',
+                'constraint' => '50',
                 'null' => false,
             ),
             'responder_phone' => array(
@@ -46,6 +46,33 @@ class Migration_Add_action_card_responses extends CI_Migration
             'action_answer' => array(
                 'type' => 'VARCHAR',
                 'constraint' => '255',
+                'null' => false,
+            ), 
+            'action_card_question_location' => array(
+                'type' => 'VARCHAR',
+                'constraint' => '100',
+            ),
+            'action_card_question_latitude' => array(
+                'type' => 'VARCHAR',
+                'constraint' => '100',
+            ),
+            'action_card_question_longitude' => array(
+                'type' => 'VARCHAR',
+                'constraint' => '100',
+            ),
+            'action_card_package_id' => array(
+                'type' => 'VARCHAR',
+                'constraint' => '100',
+                'null' => false,
+            ),
+            'event_id' => array(
+                'type' => 'VARCHAR',
+                'constraint' => '100',
+                'null' => false,
+            ),
+            'unique_response_id' => array(
+                'type' => 'VARCHAR',
+                'constraint' => '100',
                 'null' => false,
             ),
             'created_at' => array(

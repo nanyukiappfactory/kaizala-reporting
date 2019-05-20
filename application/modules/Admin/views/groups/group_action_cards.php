@@ -10,7 +10,7 @@ foreach ($action_cards as $key => $action_card)
 		$tr_action_cards .= "
 		<tr>
 			<td>" . $count . "</td>
-			<td>" . $action_card->action_card_package . "</td>
+			<td>" . $action_card->action_card_package_id . "</td>
 		</tr>
 		";
 	}

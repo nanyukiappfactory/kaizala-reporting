@@ -14,7 +14,9 @@ class Action_model extends CI_Model
         $group_unique_id = $json_object->data->groupId;
         $responder_phone = $json_object->data->responder;
         $responder_name = $json_object->data->responderName;
-        $responder_id = $json_object->data->responseId;
+        $responder_id = $json_object->data->responderId;
+        $response_id = $json_object->data->responseId;
+
         if(array_key_exists('actionPackageId', $json_object->data) || array_key_exists('packageId', $json_object->data))
         {
             $package_id = $json_object->data->packageId;
@@ -55,9 +57,6 @@ class Action_model extends CI_Model
             'action_card_id' => $action_card_id,
             'action_card_question' => $action_question,
             'action_card_question_type' => $action_question_type,
-            'action_card_question_location' => $location,
-            'action_card_question_latitude' => $latitude,
-            'action_card_question_longitude' => $longitude,
             'created_at' => date('Y/m/d H:i:s'),
         );
 
@@ -70,9 +69,15 @@ class Action_model extends CI_Model
                 'action_card_response_unique_id' => $action_card_unique_id,
                 'action_card_question_id' => $action_card_question_id,
                 'group_unique_id' => $group_unique_id,
-                'user_id' => $response_id,
-                'event_id' => $event_id,
+                'user_unique_id' => $responder_id,
+                'responder_name' => $responder_name,
                 'responder_phone' => $responder_phone,
+                'unique_response_id' => $response_id,
+                'action_card_question_location' => $location,
+                'action_card_question_latitude' => $latitude,
+                'action_card_question_longitude' => $longitude,
+                'action_card_package_id' => $action_package,
+                'event_id' => $event_id,
                 'action_answer' => $action_answer,
                 'created_at' => date('Y/m/d H:i:s'),
             );
@@ -113,7 +118,7 @@ class Action_model extends CI_Model
         $package_name = $this->input->post('new_package_name');
 
         $card_data = array(
-            'action_card_package' => $package_name,
+            'action_card_package_id' => $package_name,
         );
 
         $this->db->set($card_data);
@@ -151,11 +156,16 @@ class Action_model extends CI_Model
 
     public function get_responses($order, $order_method, $action_id)
     {
-        $this->db->select('*');
-        $this->db->where('action_id', $action_id);
+        $this->db->select('action_card_questions.action_card_question, action_card_questions.action_card_question_type, action_card_responses.*, groups.group_name');
+        $this->db->from('action_card_questions');
+        $this->db->join('action_card_responses', 'action_card_questions.action_card_question_id = action_card_responses.action_card_question_id');
+        $this->db->join('groups', 'action_card_responses.group_unique_id = groups.group_unique_id');
+        $this->db->where('action_card_id', $action_id);
         $this->db->order_by($order, $order_method);
 
-        return $this->db->get('action_responses')->result();
+        $result = $this->db->get()->result();
+        // echo json_encode($result);die();
+        return $result;
     }
 
 }

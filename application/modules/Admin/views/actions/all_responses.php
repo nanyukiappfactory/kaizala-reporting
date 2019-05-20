@@ -7,28 +7,28 @@ if (count($action_responses) > 0) {
     $single_data['action_responses'] = $action_responses;
 
     foreach ($action_responses as $row) {
-        if ((count($duplicates) == 0) || !(in_array($row->response_id, $duplicates))) {
-            $single_data['response_id'] = $row->response_id;
+        if ((count($duplicates) == 0) || !(in_array($row->unique_response_id, $duplicates))) {
+            $single_data['response_id'] = $row->unique_response_id;
             $single_data['responder_name'] = $row->responder_name;
 
             $table_row_responses .= "
 				<tr>
 					<td>" . $count++ . "</td>
-					<td>" . $row->action_package . "</td>
+					<td>" . $row->action_card_package_id . "</td>
 					<td>" . $row->group_name . "</td>
 					<td>" . $row->responder_name . "</td>
 					<td>" . $row->responder_phone . "</td>
 					<td>" . date('d M Y H:i', strtotime($row->created_at)) . "</td>
 					<td>
 						<button type='button' class='btn btn-danger btn-sm' data-toggle='modal'
-							data-target='#singleResponse" . $row->response_id . "'>
+							data-target='#singleResponse" . $row->unique_response_id . "'>
 								Q&As
 						</button>
 					</td>
 				</tr>
 			";
             $this->load->view('actions/single_response', $single_data);
-            array_push($duplicates, $row->response_id);
+            array_push($duplicates, $row->unique_response_id);
         }
     }
 }
@@ -47,7 +47,7 @@ if (count($action_responses) > 0) {
                     <tr>
                         <th>#</th>
                         <th>
-                            <?php echo anchor(base_url() . 'administration/all-responses/' . $action_id . '/action_package/' . $order_method, 'ActionPackage'); ?>
+                            <?php echo anchor(base_url() . 'administration/all-responses/' . $action_id . '/action_card_package_id/' . $order_method, 'ActionPackage'); ?>
                         </th>
                         <th>
                             <?php echo anchor(base_url() . 'administration/all-responses/' . $action_id . '/group_name/' . $order_method, 'GroupName'); ?>

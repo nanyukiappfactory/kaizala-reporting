@@ -26,6 +26,11 @@ class Migration_Add_action_cards extends CI_Migration
                 'constraint' => '100',
                 'null' => false,
             ),
+            'action_card_version_id' => array(
+                'type' => 'VARCHAR',
+                'constraint' => '100',
+                'null' => false,
+            ),
             'action_card_event_type' => array(
                 'type' => 'VARCHAR',
                 'constraint' => '100',

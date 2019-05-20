@@ -34,7 +34,6 @@ class Actioncard extends admin
             "check" => "Actions",
             'registered_groups' => $webhook_registered_groups,
         );
-        // var_dump($data);die();
 
         $this->load->view('layouts/layout', $data);
     }

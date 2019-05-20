@@ -29,18 +29,6 @@ class Migration_Add_action_card_questions extends CI_Migration
                 'constraint' => '100',
                 'null' => false,
             ),
-            'action_card_question_location' => array(
-                'type' => 'VARCHAR',
-                'constraint' => '100',
-            ),
-            'action_card_question_latitude' => array(
-                'type' => 'VARCHAR',
-                'constraint' => '100',
-            ),
-            'action_card_question_longitude' => array(
-                'type' => 'VARCHAR',
-                'constraint' => '100',
-            ),
             'created_at' => array(
                 'type' => 'DATETIME',
                 'null' => true,
