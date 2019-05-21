@@ -155,23 +155,26 @@ class Action_model extends CI_Model
         );
 
         $this->db->set($card_data);
-        $this->db->where('action_card_response_id', $action_id);
+        $this->db->where('action_card_id', $action_id);
 
         if ($this->db->update('action_cards')) {
             $response_data = array(
                 'action_card_package_id' => $package_name,
             );
-            $this->db->set($response_data);
-            $this->db->where('action_card_response_id', $action_id);
 
-			if ($this->db->update('action_card_responses')) 
-			{
-                return true;
-			} 
-			else 
-			{
-                return false;
-            }
+            return true;
+            
+            // $this->db->set($response_data);
+            // $this->db->where('action_card_response_id', $action_id);
+
+			// if ($this->db->update('action_card_responses')) 
+			// {
+            //     return true;
+			// } 
+			// else 
+			// {
+            //     return false;
+            // }
 		} 
 		else 
 		{
