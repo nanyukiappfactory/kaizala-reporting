@@ -2,7 +2,7 @@
 
 class Action_model extends CI_Model
 {
-    public function save_action_response_question($response_with_question, $json_object, $action_card_id,  $response_id, $event_id, $action_card_name = NULL)
+    public function save_action_response_question($response_with_question, $json_object, $action_card_id,  $response_id, $event_id, $image_url, $action_card_name = NULL)
     {
         //Location
         $latitude = '';
@@ -50,10 +50,10 @@ class Action_model extends CI_Model
         } 
         else if ($action_question_type == "DateTime") 
         {
-            $str_time = $response_with_question->answer;
+            $str_date = $response_with_question->answer;
             $num_date = $str_date + 0;
             $date = intval($num_date / 1000);
-            $action_answer = date("Y-m-d H:i:s")
+            $action_answer = date("Y-m-d H:i:s", $date);
         } 
         else 
         {
@@ -64,7 +64,7 @@ class Action_model extends CI_Model
             'action_card_id' => $action_card_id,
             'action_card_question' => $action_question,
             'action_card_question_type' => $action_question_type,
-            'created_at' => date('Y/m/d H:i:s'),
+            'created_at' => date('Y-m-d H:i:s'),
         );
 
         // Save responses
@@ -76,7 +76,7 @@ class Action_model extends CI_Model
             {
                 $images_obj = $response_with_question->answer;
                 foreach ($images_obj as $key => $image) {
-                    $action_answer = $image->mediaUrl;
+                    $action_answer = $this->save_image($image->mediaUrl, $image_url);
                     $data = array(
                         'action_card_response_unique_id' => $action_card_unique_id,
                         'action_card_question_id' => $action_card_question_id,
@@ -199,6 +199,15 @@ class Action_model extends CI_Model
         $result = $this->db->get()->result();
         // echo json_encode($result);die();
         return $result;
+    }
+
+    private function save_image($image_url, $path)
+    {
+        $image_name = md5(date("Y-m-d H:i:s"));
+        $content = file_get_contents($image_url);
+        file_put_contents($path . '/' . $image_name . '.jpg', $content);
+
+        return $path . '/' . $image_name . '.jpg';
     }
 
 }

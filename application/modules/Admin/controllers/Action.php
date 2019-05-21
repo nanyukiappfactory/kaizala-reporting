@@ -4,6 +4,8 @@ if (!defined('BASEPATH')) {
 }
 class Action extends CI_Controller
 {
+    public $upload_path;
+    public $upload_location;
     public function __construct()
     {
         parent::__construct();
@@ -29,6 +31,8 @@ class Action extends CI_Controller
         }
 
         //Load models
+        $this->upload_path = realpath(APPPATH . '../assets/uploads');
+        $this->upload_location = base_url() . 'assets/uploads/';
         $this->load->model('action_model');
         $this->load->model('group_model');
         $this->load->model('actioncard_model');
@@ -201,7 +205,6 @@ class Action extends CI_Controller
                 else 
                 {
                     $existed_action_id = $if_action_exists->action_card_id;
-
                     $to_do = 'update';
                 }
 
@@ -246,7 +249,7 @@ class Action extends CI_Controller
 
                     foreach ($response_with_questions as $key => $response_with_question) 
                     {
-                        $action_response_question_id = $this->action_model->save_action_response_question($response_with_question, $json_object, $action_card_id, $response_id, $event_id);
+                        $action_response_question_id = $this->action_model->save_action_response_question($response_with_question, $json_object, $action_card_id, $response_id, $event_id, $this->upload_path);
                     }
 
                     echo "ActionResponse";

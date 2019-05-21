@@ -8,6 +8,7 @@ foreach ($action_responses as $key => $value) {
         $action_answer = $value->action_answer;
         $action_question = $value->action_card_question;
         $location = $value->action_card_question_location;
+
         /**
          * So when you are going to use javascript date object timestamp with php date object you should divide timestamp of javascript by 1000 and use it in php
          * eg.
@@ -17,12 +18,15 @@ foreach ($action_responses as $key => $value) {
 
         if ($question_type == 'Location') {
             $answer = $location;
-        } else if ($question_type == 'DateTime') {
-            $str_date = $action_answer;
-            $num_date = $str_date + 0;
-            $date = intval($num_date / 1000);
-            $answer = date('d M Y H:i', $date);
-        } else {
+        } 
+        else if ($question_type == 'DateTime') {
+            $str_date = strtotime($action_answer);
+            $answer = date('d M Y H:i', $str_date);
+        }
+        else if (($question_type == 'AttachmentList' || $question_type == 'Image') && ($action_answer != "" || $action_answer != null)) {
+            $answer = '<img src="' . $action_answer . '" alt="Image Loading" >';
+        } 
+        else {
             $answer = $action_answer;
         }
         if (empty($answer)) {
