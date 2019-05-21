@@ -129,7 +129,7 @@ class Action extends CI_Controller
 
                     foreach ($response_with_questions as $key => $response_with_question) 
                     {
-                        $action_response_question_id = $this->action_model->save_action_response_question($response_with_question, $json_object, $action_card_id, $response_id, $event_id, $this->upload_path);
+                        $action_response_question_id = $this->action_model->save_action_response_question($response_with_question, $json_object, $action_card_id, $response_id, $event_id, $this->upload_path, $this->upload_location);
                     }
 
                     echo "ActionResponse";

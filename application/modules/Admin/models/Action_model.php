@@ -2,7 +2,7 @@
 
 class Action_model extends CI_Model
 {
-    public function save_action_response_question($response_with_question, $json_object, $action_card_id,  $response_id, $event_id, $image_url, $action_card_name = NULL)
+    public function save_action_response_question($response_with_question, $json_object, $action_card_id,  $response_id, $event_id, $image_url, $upload_location, $action_card_name = NULL)
     {
         //Location
         $latitude = '';
@@ -76,7 +76,7 @@ class Action_model extends CI_Model
             {
                 $images_obj = $response_with_question->answer;
                 foreach ($images_obj as $key => $image) {
-                    $action_answer = $this->save_image($image->mediaUrl, $image_url);
+                    $action_answer = $this->save_image($image->mediaUrl, $image_url, $upload_location);
                     $data = array(
                         'action_card_response_unique_id' => $action_card_unique_id,
                         'action_card_question_id' => $action_card_question_id,
@@ -155,14 +155,14 @@ class Action_model extends CI_Model
         );
 
         $this->db->set($card_data);
-        $this->db->where('action_card_id', $action_id);
+        $this->db->where('action_card_response_id', $action_id);
 
         if ($this->db->update('action_cards')) {
             $response_data = array(
                 'action_card_package_id' => $package_name,
             );
             $this->db->set($response_data);
-            $this->db->where('action_card_id', $action_id);
+            $this->db->where('action_card_response_id', $action_id);
 
 			if ($this->db->update('action_card_responses')) 
 			{
@@ -201,13 +201,13 @@ class Action_model extends CI_Model
         return $result;
     }
 
-    private function save_image($image_url, $path)
+    private function save_image($image_url, $path, $upload_location)
     {
         $image_name = md5(date("Y-m-d H:i:s"));
         $content = file_get_contents($image_url);
         file_put_contents($path . '/' . $image_name . '.jpg', $content);
 
-        return $path . '/' . $image_name . '.jpg';
+        return $upload_location . '/' . $image_name . '.jpg';
     }
 
 }
