@@ -48,6 +48,13 @@ class Action_model extends CI_Model
             $location = array_key_exists('n', $loc) ? $loc->n : '';
             $action_answer = json_encode($loc);
         } 
+        else if ($action_question_type == "DateTime") 
+        {
+            $str_time = $response_with_question->answer;
+            $num_date = $str_date + 0;
+            $date = intval($num_date / 1000);
+            $action_answer = date("Y-m-d H:i:s")
+        } 
         else 
         {
             $action_answer = $response_with_question->answer;
@@ -65,24 +72,50 @@ class Action_model extends CI_Model
 
         if($action_card_question_id)
         {
-            $data = array(
-                'action_card_response_unique_id' => $action_card_unique_id,
-                'action_card_question_id' => $action_card_question_id,
-                'group_unique_id' => $group_unique_id,
-                'user_unique_id' => $responder_id,
-                'responder_name' => $responder_name,
-                'responder_phone' => $responder_phone,
-                'unique_response_id' => $response_id,
-                'action_card_question_location' => $location,
-                'action_card_question_latitude' => $latitude,
-                'action_card_question_longitude' => $longitude,
-                'action_card_package_id' => $action_package,
-                'event_id' => $event_id,
-                'action_answer' => $action_answer,
-                'created_at' => date('Y/m/d H:i:s'),
-            );
+            if ($action_question_type == "AttachmentList" || $action_question_type == "Image") 
+            {
+                $images_obj = $response_with_question->answer;
+                foreach ($images_obj as $key => $image) {
+                    $action_answer = $image->mediaUrl;
+                    $data = array(
+                        'action_card_response_unique_id' => $action_card_unique_id,
+                        'action_card_question_id' => $action_card_question_id,
+                        'group_unique_id' => $group_unique_id,
+                        'user_unique_id' => $responder_id,
+                        'responder_name' => $responder_name,
+                        'responder_phone' => $responder_phone,
+                        'unique_response_id' => $response_id,
+                        'action_card_question_location' => $location,
+                        'action_card_question_latitude' => $latitude,
+                        'action_card_question_longitude' => $longitude,
+                        'action_card_package_id' => $action_package,
+                        'event_id' => $event_id,
+                        'action_answer' => $action_answer,
+                        'created_at' => date('Y-m-d H:i:s'),
+                    );
 
+                    $action_response_question_id = $this->save_response_question($data, 'action_card_responses');
+                }
+            } 
+            else{
+                $data = array(
+                    'action_card_response_unique_id' => $action_card_unique_id,
+                    'action_card_question_id' => $action_card_question_id,
+                    'group_unique_id' => $group_unique_id,
+                    'user_unique_id' => $responder_id,
+                    'responder_name' => $responder_name,
+                    'responder_phone' => $responder_phone,
+                    'unique_response_id' => $response_id,
+                    'action_card_question_location' => $location,
+                    'action_card_question_latitude' => $latitude,
+                    'action_card_question_longitude' => $longitude,
+                    'action_card_package_id' => $action_package,
+                    'event_id' => $event_id,
+                    'action_answer' => $action_answer,
+                    'created_at' => date('Y-m-d H:i:s'),
+                );
             $action_response_question_id = $this->save_response_question($data, 'action_card_responses');
+            }
 
             return $action_response_question_id;
         }
