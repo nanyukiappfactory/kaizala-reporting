@@ -24,7 +24,7 @@ foreach ($action_responses as $key => $value) {
             $answer = date('d M Y H:i', $str_date);
         }
         else if (($question_type == 'AttachmentList' || $question_type == 'Image') && ($action_answer != "" || $action_answer != null)) {
-            $answer = '<img src="' . $action_answer . '" alt="Image Loading" >';
+            $answer = '<img src="' . $action_answer . '" alt="Image Loading" width="50" height="45">';
         } 
         else {
             $answer = $action_answer;
