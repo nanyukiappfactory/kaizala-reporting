@@ -158,23 +158,12 @@ class Action_model extends CI_Model
         $this->db->where('action_card_id', $action_id);
 
         if ($this->db->update('action_cards')) {
-            $response_data = array(
-                'action_card_package_id' => $package_name,
-            );
-
-            return true;
-            
-            // $this->db->set($response_data);
-            // $this->db->where('action_card_response_id', $action_id);
-
-			// if ($this->db->update('action_card_responses')) 
-			// {
-            //     return true;
-			// } 
-			// else 
-			// {
-            //     return false;
-            // }
+            if($this->update_response_package_name($package_name, $action_id)){
+                return true;
+            }
+            else{
+                return false;
+            }
 		} 
 		else 
 		{
@@ -182,6 +171,23 @@ class Action_model extends CI_Model
         }
     }
 
+    private function update_response_package_name($package_name, $action_id)
+    {
+        $response_data = array(
+            'action_card_package_id' => $package_name,
+        );
+
+        $this->db->set($response_data);
+        $this->db->join("action_card_questions", "action_card_questions.action_card_question_id = action_card_responses.action_card_question_id");
+        $this->db->where('action_card_questions.action_card_id', $action_id);
+
+        if($this->db->update('action_card_responses')){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
     
     public function action_responses_count($where)
     {

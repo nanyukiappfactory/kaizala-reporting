@@ -32,24 +32,6 @@ class Actioncard_model extends CI_Model
                 return false;
             }
         }
-        // else if($control == 'update')
-        // {
-        //     $action_card_responder_id = $json_object->data->responseId;
-        //     $action_card_responder_phone = $json_object->data->responder;
-        //     $action_card_responder_name = $json_object->data->responderName;
-
-        //     $data = array(
-        //         'created_at' => date('Y/m/d H:i:s'),
-        //     );
-
-        //     $this->db->set($data);
-        //     $this->db->where('action_card_id', $action_card_id);
-        //     if ($this->db->update('action_cards')) {
-        //         return TRUE;
-        //     } else {
-        //         return FALSE;
-        //     }
-        // }
     }
 
     public function check_if_action_exists($action_card_unique_id)
