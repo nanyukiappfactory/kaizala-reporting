@@ -6,7 +6,7 @@ if (count($action_cards) > 0) {
         $table_row_contents .= "
 		<tr>
 			<td>" . $count++ . "</td>
-			<td>" . $row->action_card_package_id . "
+			<td>" . $row->action_card_package_name . "
 				<button type='button' class='btn btn-warning btn-sm float-right' data-toggle='modal' data-target='#editPackageName" . $row->action_card_id . "'>
 					Edit
 				</button>
@@ -18,7 +18,7 @@ if (count($action_cards) > 0) {
 			</td>
 		</tr>";
 
-        $v_edit_data['action_package'] = $row->action_card_package_id;
+        $v_edit_data['action_package'] = $row->action_card_package_name;
         $v_edit_data['action_id'] = $row->action_card_id;
         $this->load->view('actions/edit_package_name', $v_edit_data);
     }

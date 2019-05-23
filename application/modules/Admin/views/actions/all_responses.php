@@ -14,7 +14,7 @@ if (count($action_responses) > 0) {
             $table_row_responses .= "
 				<tr>
 					<td>" . $count++ . "</td>
-					<td>" . $row->action_card_package_id . "</td>
+					<td>" . $row->action_card_package_name . "</td>
 					<td>" . $row->group_name . "</td>
 					<td>" . $row->responder_name . "</td>
 					<td>" . $row->responder_phone . "</td>

@@ -16,6 +16,7 @@ class Actioncard_model extends CI_Model
             $data = array(
                 'action_card_unique_id' => $action_card_unique_id,
                 'action_card_package_id' => $action_package_id,
+                'action_card_package_name' => $action_package_id,
                 'action_card_subscription_id' => $action_card_subscription_id,
                 'action_card_version_id' => $action_card_version_id,
                 'action_card_object_id' => $action_card_object_id,

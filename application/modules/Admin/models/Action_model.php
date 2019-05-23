@@ -109,6 +109,7 @@ class Action_model extends CI_Model
                     'action_card_question_location' => $location,
                     'action_card_question_latitude' => $latitude,
                     'action_card_question_longitude' => $longitude,
+                    'action_card_package_name' => $action_package,
                     'action_card_package_id' => $action_package,
                     'event_id' => $event_id,
                     'action_answer' => $action_answer,
@@ -151,7 +152,7 @@ class Action_model extends CI_Model
         $package_name = $this->input->post('new_package_name');
 
         $card_data = array(
-            'action_card_package_id' => $package_name,
+            'action_card_package_name' => $package_name,
         );
 
         $this->db->set($card_data);
@@ -173,20 +174,17 @@ class Action_model extends CI_Model
 
     private function update_response_package_name($package_name, $action_id)
     {
-        $response_data = array(
-            'action_card_package_id' => $package_name,
-        );
-
-        $this->db->set($response_data);
-        $this->db->join("action_card_questions", "action_card_questions.action_card_question_id = action_card_responses.action_card_question_id");
+        $responses = array();
+        $this->db->select("action_card_questions.action_card_question_id");
         $this->db->where('action_card_questions.action_card_id', $action_id);
+        $query = $this->db->get("action_card_questions")->result();
 
-        if($this->db->update('action_card_responses')){
-            return true;
+        foreach ($query as $key => $value) {
+            $this->db->set('action_card_package_name', $package_name);
+            $this->db->where('action_card_question_id', $value->action_card_question_id);
+            $this->db->update("action_card_responses");
         }
-        else{
-            return false;
-        }
+        return true;
     }
     
     public function action_responses_count($where)

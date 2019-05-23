@@ -60,6 +60,11 @@ class Migration_Add_action_card_responses extends CI_Migration
                 'type' => 'VARCHAR',
                 'constraint' => 100,
             ),
+            'action_card_package_name' => array(
+                'type' => 'VARCHAR',
+                'constraint' => '100',
+                'null' => false,
+            ),
             'action_card_package_id' => array(
                 'type' => 'VARCHAR',
                 'constraint' => 100,
