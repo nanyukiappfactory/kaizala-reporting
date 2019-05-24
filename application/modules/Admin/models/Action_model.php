@@ -2,7 +2,7 @@
 
 class Action_model extends CI_Model
 {
-    public function save_action_response_question($response_with_question, $json_object, $action_card_id,  $response_id, $event_id, $image_url, $upload_location, $action_card_name = NULL)
+    public function save_action_response_question($response_with_question, $json_object, $action_card_id,  $response_id, $event_id, $action_package_name, $image_url, $upload_location, $action_card_name = NULL)
     {
         //Location
         $latitude = '';
@@ -17,15 +17,15 @@ class Action_model extends CI_Model
         $responder_id = $json_object->data->responderId;
         $response_id = $json_object->data->responseId;
 
-        if(array_key_exists('actionPackageId', $json_object->data) || array_key_exists('packageId', $json_object->data))
-        {
-            $package_id = $json_object->data->packageId;
-            $action_package = $json_object->data->actionPackageId;
-        }
-        else
-        {
-            $package_id = $json_object->data->actionId;
-            $action_package = $json_object->data->actionId;
+        if($action_package_name == null){
+            if(array_key_exists('actionPackageId', $json_object->data) || array_key_exists('packageId', $json_object->data))
+            {
+                $package_id = $json_object->data->actionPackageId;
+                $action_package = $json_object->data->actionPackageId;
+            }
+        }else{
+            $package_id = $json_object->data->actionPackageId;
+            $action_package = $action_package_name;
         }
 
         $action_question = $response_with_question->title;
@@ -67,9 +67,17 @@ class Action_model extends CI_Model
             'created_at' => date('Y-m-d H:i:s'),
         );
 
-        // Save responses
-        $action_card_question_id = $this->save_response_question($action_card_question_data, 'action_card_questions');
-
+        // If the question exists
+        $action_question_exist = $this->question_exist_in_db($action_question, $action_card_id);
+        
+        if($action_question_exist){
+            $action_card_question_id = $action_question_exist;
+        }
+        else{
+            // Save responses
+            $action_card_question_id = $this->save_response_question($action_card_question_data, 'action_card_questions');
+        }
+        
         if($action_card_question_id)
         {
             if ($action_question_type == "AttachmentList" || $action_question_type == "Image") 
@@ -88,7 +96,8 @@ class Action_model extends CI_Model
                         'action_card_question_location' => $location,
                         'action_card_question_latitude' => $latitude,
                         'action_card_question_longitude' => $longitude,
-                        'action_card_package_id' => $action_package,
+                        'action_card_package_name' => $action_package,
+                        'action_card_package_id' => $package_id,
                         'event_id' => $event_id,
                         'action_answer' => $action_answer,
                         'created_at' => date('Y-m-d H:i:s'),
@@ -110,15 +119,31 @@ class Action_model extends CI_Model
                     'action_card_question_latitude' => $latitude,
                     'action_card_question_longitude' => $longitude,
                     'action_card_package_name' => $action_package,
-                    'action_card_package_id' => $action_package,
+                    'action_card_package_id' => $package_id,
                     'event_id' => $event_id,
                     'action_answer' => $action_answer,
                     'created_at' => date('Y-m-d H:i:s'),
                 );
+                
             $action_response_question_id = $this->save_response_question($data, 'action_card_responses');
             }
 
             return $action_response_question_id;
+        }
+    }
+
+    private function question_exist_in_db($action_question, $action_card_id)
+    {
+        $this->db->select("action_card_question_id");
+        $this->db->where("action_card_id", $action_card_id);
+        $this->db->where("action_card_question", $action_question);
+        $query = $this->db->get("action_card_questions");
+
+        if($query->num_rows() > 0){
+            return $query->result()[0]->action_card_question_id;
+        }
+        else {
+            return false;
         }
     }
 

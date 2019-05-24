@@ -49,9 +49,7 @@ class Action extends CI_Controller
         else 
         {
             $json_string = file_get_contents("php://input");
-
             $this->handle_event_submitted($json_string);
-            
         }
 
     }
@@ -71,21 +69,23 @@ class Action extends CI_Controller
             $group_name = $group_details[0]->group_name;
             $group_id = $group_details[0]->group_id;
             $action_card_unique_id = $json_object->data->actionId;
+            $actionPackageId = $json_object->data->actionPackageId;
+            $action_package_name = null;
 
             $existed_action_id = null;
 
             if ((strpos($event_type, 'Response') != false) || (strpos($event_type, 'response') != false)) 
             {
-                $if_action_exists = $this->actioncard_model->check_if_action_exists($action_card_unique_id);
+                $if_action_exists = $this->actioncard_model->check_if_action_exists($actionPackageId);
 
-                if ($if_action_exists == false) 
+                if ($if_action_exists == "not_exist") 
                 {
                     $to_do = 'save';
                 } 
                 else 
                 {
-                    $existed_action_id = $if_action_exists->action_card_id;
-                    $to_do = 'update';
+                    $to_do = 'get_package_name';
+                    $existed_action_id = $if_action_exists[0]->action_card_id;
                 }
 
             } 
@@ -109,9 +109,11 @@ class Action extends CI_Controller
 
                 if ($to_do == 'save' || $to_do == 'created') {
                     $action_card_id = $db_result;
-                } else if ($to_do == 'update') {
-                    $action_card_id = $if_action_exists->action_card_id;
+                } else if ($db_result == null) {
+                    $action_card_id = $if_action_exists[0]->action_card_id;
+                    $action_package_name = $if_action_exists[0]->action_card_package_name;
                 }
+                // echo $action_package_name;die();
 
                 // Save to group_action_cards table
                 if($action_card_id != false && ($to_do == 'save' || $to_do == 'created')){
@@ -121,7 +123,7 @@ class Action extends CI_Controller
                     ));
                 }
 
-                if (($action_card_id != false) && ($to_do != 'created' && $to_do != 'update')) 
+                if (($action_card_id != false)) 
                 {
                     $response_with_questions = $json_object->data->responseDetails->responseWithQuestions;
                     $response_id = $json_object->data->responseId;
@@ -129,7 +131,7 @@ class Action extends CI_Controller
 
                     foreach ($response_with_questions as $key => $response_with_question) 
                     {
-                        $action_response_question_id = $this->action_model->save_action_response_question($response_with_question, $json_object, $action_card_id, $response_id, $event_id, $this->upload_path, $this->upload_location);
+                        $action_response_question_id = $this->action_model->save_action_response_question($response_with_question, $json_object, $action_card_id, $response_id, $event_id, $action_package_name, $this->upload_path, $this->upload_location);
                     }
 
                     echo "ActionResponse";

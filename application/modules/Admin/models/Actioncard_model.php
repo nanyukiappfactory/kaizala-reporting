@@ -33,22 +33,25 @@ class Actioncard_model extends CI_Model
                 return false;
             }
         }
+        else{
+            return null;
+        }
     }
 
-    public function check_if_action_exists($action_card_unique_id)
+    public function check_if_action_exists($actionPackageId)
     {
-        $this->db->select('action_card_id, action_card_package_id');
-        $this->db->where('action_card_unique_id', $action_card_unique_id);
+        $this->db->select('action_card_id, action_card_package_name');
+        $this->db->where('action_card_package_id', $actionPackageId);
         $query = $this->db->get('action_cards');
-
+        // echo json_encode($query->num_rows());die();
         if ($query->num_rows() > 0) {
-            return ($query->row());
+            $query = $query->result();
+            return $query;
         } else {
-            return false;
+            return "not_exist";
         }
 
     }
-
 
     public function get_action_cards($order, $order_method)
     {
