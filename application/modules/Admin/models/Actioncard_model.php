@@ -4,7 +4,7 @@ class Actioncard_model extends CI_Model
 {
     public function save_action_card($json_object, $group_name, $control, $action_card_id = NULL)
     {
-        if($control == 'save' || $control == 'created')
+        if($control == 'save')
         {
             $action_card_unique_id = $json_object->data->actionId;
             $action_package_id = $control == 'save' ? (array_key_exists('actionPackageId', $json_object->data) ? $json_object->data->actionPackageId : $json_object->data->actionId) : $json_object->data->actionId;

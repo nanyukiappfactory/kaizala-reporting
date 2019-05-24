@@ -114,8 +114,7 @@ class Action extends CI_Controller
                     $action_card_id = $if_action_exists[0]->action_card_id;
                     $action_package_name = $if_action_exists[0]->action_card_package_name;
                 }
-                // echo $action_package_name;die();
-
+                
                 // Save to group_action_cards table
                 if($action_card_id != false && ($to_do == 'save' || $to_do == 'created')){
                     $group_action_card_id = $this->group_model->save_group_action_cards(array(
