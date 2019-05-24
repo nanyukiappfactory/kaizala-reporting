@@ -1,6 +1,6 @@
 <?php
 $table_row_responses = "";
-
+$count_response = 0;
 if (count($action_responses) > 0) {
     $count = 1;
     $duplicates = array();
@@ -10,6 +10,7 @@ if (count($action_responses) > 0) {
         if ((count($duplicates) == 0) || !(in_array($row->unique_response_id, $duplicates))) {
             $single_data['response_id'] = $row->unique_response_id;
             $single_data['responder_name'] = $row->responder_name;
+            $count_response++;
 
             $table_row_responses .= "
 				<tr>

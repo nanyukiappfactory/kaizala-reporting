@@ -46,7 +46,7 @@ class Actioncard extends admin
 
         $v_data["order_method"] = $order_method == "DESC" ? "ASC" : "DESC";
 
-        $v_data['count_response'] = $this->action_model->count_response($action_id);
+        // $v_data['count_response'] = $this->action_model->count_response($action_id);
 
         $webhook_registered_groups = $this->group_model->get_webhook_groups(null);
 
