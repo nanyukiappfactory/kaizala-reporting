@@ -66,10 +66,8 @@ class Actioncard_model extends CI_Model
 
     public function all_action_cards()
     {
-        $this->db->select('action_cards.*, groups.group_name, groups.group_unique_id');
+        $this->db->select('*');
         $this->db->from('action_cards');
-        $this->db->join('group_action_cards', 'action_cards.action_card_id = group_action_cards.action_card_id');
-        $this->db->join('groups', 'groups.group_id = group_action_cards.group_id');
 
         $result = $this->db->get()->result();
         // echo json_encode($result);die();

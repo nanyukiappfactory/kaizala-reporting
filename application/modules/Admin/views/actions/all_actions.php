@@ -1,11 +1,9 @@
 <?php
 $table_row_contents = "";
-$remove_dups = array();
 if (count($action_cards) > 0) {
     $count = 1;
     foreach ($action_cards as $row) {
-        if(!in_array($row->action_card_unique_id, $remove_dups) || count($remove_dups) == 0){
-            $table_row_contents .= "
+        $table_row_contents .= "
             <tr>
                 <td>" . $count++ . "</td>
                 <td>" . $row->action_card_package_name . "
@@ -23,8 +21,6 @@ if (count($action_cards) > 0) {
             $v_edit_data['action_package'] = $row->action_card_package_name;
             $v_edit_data['action_id'] = $row->action_card_id;
             $this->load->view('actions/edit_package_name', $v_edit_data);
-            array_push($remove_dups, $row->action_card_unique_id);
-        }
     }
 }
 ?>
