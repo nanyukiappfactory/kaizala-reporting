@@ -29,6 +29,10 @@ if ($kaiza_groups->num_rows() > 0) {
 			<td>" . $row->group_type . "</td>
 			<td>" . date('d M Y H:i', strtotime($row->created_at)) . "</td>
 			<td>
+				<button type='button' class='btn btn-danger btn-sm' data-toggle='modal'
+					data-target='#groupActions" . $row->group_id . "'>
+					Action Cards
+				</button>
 				<a href='" . base_url() . "administration/group-users/" . $group_name . "/" . $row->group_id . "' class='btn btn-secondary btn-sm'>Members</a>" .
             $td_group_status . "
 			</td>
@@ -38,6 +42,7 @@ if ($kaiza_groups->num_rows() > 0) {
         $s_group['group_name'] = $row->group_name;
         $s_group['group_id'] = $row->group_id;
         $s_group['group_unique_id'] = $row->group_unique_id;
+        $this->load->view('groups/group_action_cards', $s_group);
     }
 }
 ?>
