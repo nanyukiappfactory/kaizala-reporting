@@ -1,26 +1,30 @@
 <?php
 $table_row_contents = "";
+$remove_dups = array();
 if (count($action_cards) > 0) {
     $count = 1;
     foreach ($action_cards as $row) {
-        $table_row_contents .= "
-		<tr>
-			<td>" . $count++ . "</td>
-			<td>" . $row->action_card_package_name . "
-				<button type='button' class='btn btn-warning btn-sm float-right' data-toggle='modal' data-target='#editPackageName" . $row->action_card_id . "'>
-					Edit
-				</button>
-			</td>
-			<td>" . $row->group_name . "</td>
-			<td>" . date('d M Y H:i', strtotime($row->created_at)) . "</td>
-			<td>
-				<a href=" . base_url() . "administration/all-responses/" . $row->action_card_id . " class='btn btn-success btn-sm'>Responses</a>
-			</td>
-		</tr>";
-
-        $v_edit_data['action_package'] = $row->action_card_package_name;
-        $v_edit_data['action_id'] = $row->action_card_id;
-        $this->load->view('actions/edit_package_name', $v_edit_data);
+        if(!in_array($row->action_card_package_id, $remove_dups) || count($remove_dups) == 0){
+            $table_row_contents .= "
+            <tr>
+                <td>" . $count++ . "</td>
+                <td>" . $row->action_card_package_name . "
+                    <button type='button' class='btn btn-warning btn-sm float-right' data-toggle='modal' data-target='#editPackageName" . $row->action_card_id . "'>
+                        Edit
+                    </button>
+                </td>
+                <td>" . $row->group_name . "</td>
+                <td>" . date('d M Y H:i', strtotime($row->created_at)) . "</td>
+                <td>
+                    <a href=" . base_url() . "administration/all-responses/" . $row->action_card_id . " class='btn btn-success btn-sm'>Responses</a>
+                </td>
+            </tr>";
+    
+            $v_edit_data['action_package'] = $row->action_card_package_name;
+            $v_edit_data['action_id'] = $row->action_card_id;
+            $this->load->view('actions/edit_package_name', $v_edit_data);
+            array_push($remove_dups, $row->action_card_package_id);
+        }
     }
 }
 ?>
