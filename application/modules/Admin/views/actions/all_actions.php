@@ -11,7 +11,6 @@ if (count($action_cards) > 0) {
                         Edit
                     </button>
                 </td>
-                <td>" . $row->group_name . "</td>
                 <td>" . date('d M Y H:i', strtotime($row->created_at)) . "</td>
                 <td>
                     <a href=" . base_url() . "administration/all-responses/" . $row->action_card_id . " class='btn btn-success btn-sm'>Responses</a>
@@ -39,9 +38,6 @@ if (count($action_cards) > 0) {
                         <th>#</th>
                         <th>
                             <?php echo anchor(base_url() . 'administration/all-actions/action_card_package/' . $order_method, 'Action Package'); ?>
-                        </th>
-                        <th>
-                            <?php echo anchor(base_url() . 'administration/all-actions/group_name/' . $order_method, 'Group Name'); ?>
                         </th>
                         <th>
                             <?php echo anchor(base_url() . 'administration/all-actions/created_at/' . $order_method, 'Created Date'); ?>
